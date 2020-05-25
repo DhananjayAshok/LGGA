@@ -1,0 +1,16 @@
+,Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+0,I.6.2a,exp(-theta**2/2)/sqrt(2*pi),"div(div(sin(mul(mul(-0.031, -0.140), cos(-0.525))), sub(cos(mul(X0, X0)), sub(mul(X0, -0.803), mul(X0, -0.295)))), div(exp(sqrt(tan(-0.069))), div(sin(exp(0.527)), mul(cos(-0.278), div(X0, -0.087)))))",-0.007545360544283897,7.713321685791016
+1,I.6.2,exp(-(theta/sigma)**2/2)/(sqrt(2*pi)*sigma),"sqrt(sqrt(sub(X0, X0)))",-0.0007727911750434747,8.730687379837036
+2,I.6.2b,exp(-((theta-theta1)/sigma)**2/2)/(sqrt(2*pi)*sigma),"tan(sub(tan(X2), tan(X2)))",-0.0006570040571471925,8.583910942077637
+3,I.8.14,sqrt((x2-x1)**2+(y2-y1)**2),"sqrt(sub(add(sub(mul(sub(X1, X0), sub(add(sin(0.567), X0), add(X1, cos(X3)))), cos(X1)), mul(X2, add(X3, X3))), add(mul(X2, X2), mul(add(sqrt(mul(mul(X0, X3), sqrt(cos(sub(X1, X3))))), sub(tan(exp(0.448)), sqrt(X0))), sqrt(X2)))))",0.831564877091055,102.04920864105225
+4,I.9.18,G*m1*m2/((x2-x1)**2+(y2-y1)**2+(z2-z1)**2),"mul(mul(exp(mul(div(mul(X3, X1), tan(0.294)), mul(add(X3, X1), mul(X4, X6)))), sub(cos(sin(exp(-0.709))), add(sqrt(div(X6, X2)), sqrt(div(X4, X6))))), sin(mul(div(div(exp(X7), sqrt(X0)), add(cos(X4), exp(X4))), div(sub(sin(X6), tan(X0)), add(cos(X7), div(X0, X4))))))",-0.003437177216491394,8.015498638153076
+5,I.10.7,m_0/sqrt(1-v**2/c**2),"div(sub(X0, -0.719), cos(div(X1, X2)))",0.45386822770249224,97.78796935081482
+6,I.11.19,x1*y1+x2*y2+x3*y3,"add(mul(X2, X5), add(mul(X3, X0), mul(X4, X1)))",1.0,44.16236686706543
+7,I.12.1,mu*Nn,"mul(X0, X1)",1.0,8.970179796218872
+8,I.12.2,q1*q2*r/(4*pi*epsilon*r**3),"div(div(div(-0.836, X3), X1), X0)",-1.8516817206881697e-05,97.71379780769348
+9,I.12.4,q1*r/(4*pi*epsilon*r**3),"tan(sub(X2, X2))",-0.0011281124290631883,12.32007098197937
+10,I.12.5,q2*Ef,"mul(X0, X1)",1.0,14.851041555404663
+11,I.12.11,q*(Ef+B*v*sin(theta)),"tan(mul(cos(X2), sin(tan(tan(add(mul(-0.483, X3), div(X0, 0.776)))))))",-0.0004826598348701694,105.9904842376709
+12,I.13.4,1/2*m*(v**2+u**2+w**2),"add(sub(mul(X3, mul(X3, X0)), X2), mul(sin(cos(-0.966)), mul(add(cos(sub(X3, add(sub(add(X3, X0), mul(X1, 0.771)), div(tan(cos(X0)), mul(X2, X3))))), X2), mul(X0, X2))))",0.8619664375713463,102.77889347076416
+13,I.13.12,G*m1*m2*(1/r2-1/r1),"sub(sqrt(X3), sqrt(X3))",-0.0009376642281504477,8.076387882232666
+14,I.14.3,m*g*z,"mul(X1, mul(X2, X0))",1.0,43.990341901779175

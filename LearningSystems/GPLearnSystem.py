@@ -2,6 +2,7 @@ from .LearningSystem import LearningSystem
 import warnings
 from gplearn.genetic import SymbolicRegressor
 from gplearn.functions import make_function
+from gplearn.fitness import make_fitness
 import graphviz
 import os
 from Customization import *
@@ -87,6 +88,13 @@ class GPLearnSystem(LearningSystem):
     def __str__(self):
         return "gplearn"
         
+
+def sine_constraint_fitness(y, y_pred, w, delta=1):
+    """
+    Using auxilliary truth sin^2 + cos^2 = 1
+    """
+    mse = np.average((y-y_pred)**2, weights=w)
+    truth_diff = delta * y_pred 
 
 
 

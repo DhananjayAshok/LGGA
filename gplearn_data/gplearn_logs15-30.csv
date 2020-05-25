@@ -1,0 +1,16 @@
+,Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+0,I.14.4,1/2*k_spring*x**2,"mul(sqrt(cos(sqrt(sqrt(0.631)))), mul(mul(X0, 0.631), mul(X1, X1)))",0.9999999999966768,171.36386442184448
+1,I.15.3x,(x-u*t)/sqrt(1-u**2/c**2),"sub(div(sub(add(X2, X3), mul(X2, X1)), exp(0.789)), mul(X1, X2))",0.15697968426890196,176.75659728050232
+2,I.15.3t,(t-u*x/c**2)/sqrt(1-u**2/c**2),"add(exp(sin(add(X2, X2))), add(sin(sub(sin(X1), sqrt(0.832))), mul(add(sub(X1, X1), add(cos(div(add(sin(add(X0, sub(X2, -0.821))), mul(exp(sin(add(sin(add(X2, X2)), sub(X0, X0)))), tan(sqrt(-0.793)))), 0.977)), X2)), tan(sqrt(-0.793)))))",0.5180322060457867,91.22810363769531
+3,I.15.1,m_0*v/sqrt(1-v**2/c**2),"sub(mul(sqrt(exp(0.430)), add(mul(X1, X0), cos(-0.304))), div(sub(X0, mul(sqrt(sub(X1, X1)), mul(X0, X1))), add(mul(X1, X0), mul(div(mul(X0, X1), sqrt(add(sqrt(exp(sin(X1))), add(add(X0, X2), mul(X0, X1))))), -0.063))))",0.2371861269278437,85.7446174621582
+4,I.16.6,(u+v)/(1+u*v/c**2),"add(sub(cos(div(X1, -0.915)), mul(-0.410, X1)), tan(add(sqrt(sqrt(0.414)), add(X1, -0.279))))",0.00046696683629776636,86.03273153305054
+5,I.18.4,(m1*r1+m2*r2)/(m1+m2),"mul(X3, 0.669)",0.0012896602542238345,131.2661702632904
+6,I.18.12,r*F*sin(theta),"sqrt(sub(sin(sin(X2)), sqrt(X0)))",-0.00026018970711794154,97.84540295600891
+7,I.18.14,m*r*v*sin(theta),"sub(X3, X2)",-0.0011836678662855427,82.80361437797546
+8,I.24.6,1/2*m*(omega**2+omega_0**2)*1/2*x**2,"add(add(X3, exp(mul(sin(tan(sin(tan(0.974)))), sin(sqrt(div(X3, -0.151)))))), exp(0.025))",-0.007166682302182759,86.19338917732239
+9,I.25.13,q/C,"div(X0, X1)",1.0,16.66145968437195
+10,I.26.2,arcsin(n*sin(theta2)),"tan(sin(mul(sin(X1), X0)))",0.986029512346943,64.38573575019836
+11,I.27.6,1/(1/d1+n/d2),"div(sqrt(-0.642), div(sub(sub(0.492, X2), sin(X1)), add(div(sub(sub(0.492, X2), sin(X1)), add(cos(sub(0.492, X2)), div(X1, -0.838))), div(X1, -0.838))))",0.09324614014504164,102.70137047767639
+12,I.29.4,omega/c,"div(exp(X0), sub(X0, X0))",1.0,9.446975946426392
+13,I.29.16,sqrt(x1**2+x2**2-2*x1*x2*cos(theta1-theta2)),"sqrt(add(mul(X0, X0), add(mul(X1, X1), sqrt(mul(X1, X1)))))",0.3708636053553946,82.85925006866455
+14,I.30.3,Int_0*sin(n*theta/2)**2/sin(theta/2)**2,"tan(add(sub(0.275, X2), sqrt(X2)))",-0.001400820453705487,98.91287016868591

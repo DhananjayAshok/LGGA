@@ -8,9 +8,12 @@ class Trainer(object):
     """
     Class responsible for handling the loading and training of data overall
     """
-    def __init__(self, path=None, save=False, load=False, master_file="FeynmanEquations.csv"):
+    def __init__(self, path=None, save=False, load=False, noise_range=(0, 0), master_file="FeynmanEquations.csv"):
         """
         Input parameters decide whether or not the dataset created by the trainer should be loaded from saved data (load) or saved after creation (save) and if so from where/ where.
+
+        noise_range: tuple(float, float)
+            The minimum and maximum value of normally distributed noise added to the data
 
         master_file : str
             The path to the master file of equations. This csv file must at least contain the following columns - "Filename"(equation ids), "Formula"(string readable), "nvariables(int readable that matches number of variables of the equation on that line)"
@@ -18,6 +21,7 @@ class Trainer(object):
         self.path = path
         self.save = save
         self.load = load
+        self.noise_range= noise_range
         self.master_file = master_file
         return
 
@@ -32,6 +36,9 @@ class Trainer(object):
 
     def set_master_file(self, master_file):
         self.master_file = master_file
+
+    def set_noise_range(self, noise_range):
+        self.noise_range = noise_range
 
     def predict_single_equation(self, equation_id, learning_system, no_samples=1000, input_range=(-100, 100)):
         """
@@ -57,7 +64,7 @@ class Trainer(object):
         string, float, float
         """
         try:
-            df = create_dataset(equation_id, no_samples = no_samples,input_range=input_range, path=self.path, save=self.save, load=self.load, master_file=self.master_file).dropna()
+            df = create_dataset(equation_id, no_samples = no_samples,input_range=input_range, path=self.path, save=self.save, load=self.load, noise_range=self.noise_range, master_file=self.master_file).dropna()
             X = df.drop('target', axis=1)
             y = df['target']
         except:
