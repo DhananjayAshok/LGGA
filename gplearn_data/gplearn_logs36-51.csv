@@ -1,7 +1,0 @@
-,Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-0,I.43.31,mob*kb*T,"sub(mul(X1, mul(X2, X0)), sub(X1, X1))",1.0,46.41980981826782
-1,I.43.43,1/(gamma-1)*kb*v/A,cos(X3),-0.0002917485560052224,95.31303811073303
-2,I.44.4,n*kb*T*ln(V2/V1),"sin(sin(sub(sub(X4, -0.441), X0)))",-0.00021823127053854918,79.9979920387268
-3,I.47.23,sqrt(gamma*pr/rho),"sqrt(div(X1, div(X2, X0)))",1.0,47.502721548080444
-4,I.48.2,m*c**2/sqrt(1-v**2/c**2),"mul(add(sin(X2), X1), add(div(mul(X0, X2), div(X1, X2)), mul(X1, X0)))",0.6482953720768221,89.33510422706604
-5,I.50.26,x1*(cos(omega*t)+alpha*cos(omega*t)**2),,0.0,0.0

@@ -144,10 +144,10 @@ class Trainer(object):
             n += 1
             if n % save_every == 0 or n == neqs:
                 df = pd.DataFrame(logs, columns=["Equation_ID", "Real Equation", "Predicted Equation", "Error", "Time Taken"])
-                df.to_csv(f'{learning_system.get_path()}//{str(learning_system)}_logs{n-save_every}-{n}.csv')
+                df.to_csv(f'{learning_system.get_path()}//{str(learning_system)}_logs{n-save_every}-{n}.csv',index=False )
                 logs = []
         df = pd.DataFrame(global_logs, columns=["Equation_ID", "Real Equation", "Predicted Equation", "Error", "Time Taken"])
-        df.to_csv(f'{learning_system.get_path()}//{str(learning_system)}_global_logs.csv')
+        df.to_csv(f'{learning_system.get_path()}//{str(learning_system)}_global_logs.csv', index=False)
         return df
 
 

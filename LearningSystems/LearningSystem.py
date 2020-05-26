@@ -1,10 +1,20 @@
 class LearningSystem(object):
     """
     The abstract base class for LearningSystems. The following functions must be implemented:
-        get_path, __str__, fit, score
+         __str__, fit, score
+    Must also have the self.path variable initialized
     """
+    def set_path(self, path):
+        self.path = path
+
     def get_path(self):
-        raise NotImplementedError("This LearningSystem does not have a get_path function implemented")
+        try:
+            return self.path
+        except:
+            raise NotImplementedError("Must have a self.path variable")
+
+    def get_predicted_equation(self):
+        raise NotImplementedError
 
     def __str__(self):
         raise NotImplementedError("This LearningSystem does not have a string function implemented")
