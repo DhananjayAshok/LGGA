@@ -269,14 +269,3 @@ class DEAPLearningSystem(LearningSystem):
         except:
             print(f"Could not find Best model")
             return 0
-
-
-
-import pandas as pd
-d = DEAPLearningSystem(func_list=['add', 'sub','div', 'mul', 'exp', 'sin', 'cos', 'tan', 'log', 'pow', 'inv'])
-df = pd.read_csv('data\\sine.csv')
-X = df.drop('target', axis=1)
-y = df.target
-pop, logs = d.fit(X, y)
-print(d.hof[0])
-print([str(p) for p in pop])

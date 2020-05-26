@@ -328,8 +328,9 @@ def I401(inputs):
     n_0 = get_column(inputs, 0)
     m = get_column(inputs, 1)
     g = get_column(inputs, 2)
-    kb = get_column(inputs, 3)
+    x = get_column(inputs, 3)
     T = get_column(inputs, 4)
+    kb = 1.38*(10**-23)
     return n_0*exp(-m*g*x/(kb*T))
 
 
@@ -430,6 +431,7 @@ equation_dict = {
     "I.30.3" : I303,
     "I.30.5" : I305,
     "I.32.5" : I325,
+    "I.32.17": I3217,
     "I.34.8" : I348,
     "I.34.1" : I341,
     "I.34.14": I3414,
