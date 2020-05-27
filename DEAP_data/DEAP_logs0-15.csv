@@ -1,0 +1,16 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+I.6.2a,exp(-theta**2/2)/sqrt(2*pi),"sub(ARG0, ARG0)","(0.0017352720174903563,)",8.422663927078247
+I.6.2,exp(-(theta/sigma)**2/2)/(sqrt(2*pi)*sigma),"div(sqrt(sqrt(sqrt(sin(sqrt(sqrt(sqrt(sin(sqrt(sin(sqrt(sin(ARG0)))))))))))), ARG1)","(0.0006074725851561269,)",17.445323705673218
+I.6.2b,exp(-((theta-theta1)/sigma)**2/2)/(sqrt(2*pi)*sigma),"div(div(div(ARG0, ARG1), ARG0), mul(ARG0, div(ARG2, mul(ARG2, sub(tan(ARG2), ARG0)))))","(0.0008603034523835013,)",28.679959535598755
+I.8.14,sqrt((x2-x1)**2+(y2-y1)**2),"add(sqrt(ARG1), sqrt(mul(ARG1, ARG1)))","(17786.886679032366,)",10.024937868118286
+I.9.18,G*m1*m2/((x2-x1)**2+(y2-y1)**2+(z2-z1)**2),"div(ARG7, mul(add(ARG7, mul(sqrt(ARG7), tan(add(ARG7, ARG3)))), ARG4))","(0.0008187723931858078,)",14.415749788284302
+I.10.7,m_0/sqrt(1-v**2/c**2),"add(tan(sin(ARG0)), ARG0)","(998.4616579457536,)",4.8498215675354
+I.11.19,x1*y1+x2*y2+x3*y3,"mul(add(ARG4, sub(ARG3, ARG0)), ARG2)","(83791251.54495688,)",4.605397701263428
+I.12.1,mu*Nn,"mul(ARG1, ARG0)","(0.002137486991277647,)",4.281934022903442
+I.12.2,q1*q2*r/(4*pi*epsilon*r**3),"sin(exp(sub(ARG2, ARG0)))","(7.675062656522888,)",7.900077819824219
+I.12.4,q1*r/(4*pi*epsilon*r**3),"div(sin(sub(tan(ARG2), sqrt(ARG1))), sub(sub(add(sub(ARG2, ARG2), sqrt(mul(exp(ARG1), mul(div(ARG0, sub(sub(tan(ARG2), ARG0), ARG1)), add(ARG1, ARG0))))), ARG0), ARG1))","(0.00019025406638465173,)",15.903347730636597
+I.12.5,q2*Ef,"mul(ARG1, ARG0)","(0.0006331951307819432,)",4.899155139923096
+I.12.11,q*(Ef+B*v*sin(theta)),"mul(add(add(add(ARG0, add(ARG0, ARG1)), add(ARG0, sqrt(ARG1))), ARG0), add(add(ARG1, ARG3), add(add(ARG0, add(add(add(ARG1, ARG3), cos(tan(ARG4))), ARG3)), add(add(ARG1, ARG3), add(add(ARG0, add(add(add(ARG1, ARG3), add(add(ARG1, ARG3), add(add(ARG0, add(add(add(ARG1, ARG3), add(add(ARG0, ARG3), ARG1)), ARG3)), add(ARG0, ARG3)))), ARG3)), add(ARG0, ARG3))))))","(348142098476.26953,)",6.37121319770813
+I.13.4,1/2*m*(v**2+u**2+w**2),"mul(mul(ARG1, ARG1), ARG0)","(3576256808017.697,)",4.27432918548584
+I.13.12,G*m1*m2*(1/r2-1/r1),"div(sqrt(sqrt(mul(ARG2, mul(ARG3, ARG1)))), mul(ARG3, ARG1))","(0.001488090860057751,)",14.06090259552002
+I.14.3,m*g*z,"mul(sub(sub(ARG1, ARG0), ARG0), sub(ARG1, ARG2))","(2420364382431.7275,)",4.273730516433716

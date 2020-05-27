@@ -19,7 +19,7 @@ class DEAPLearningSystem(LearningSystem):
     """
     Learning Algorithm that implements the DEAP Python Library
     """
-    def __init__(self, path="DEAP_data", verbose=False, population_size=20, crossover_prob=0.5, mutation_prob=0.2, ngens=10, func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
+    def __init__(self, path="DEAP_data", verbose=False, population_size=40, crossover_prob=0.5, mutation_prob=0.2, ngens=20, func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
         """
         Parameters
         -----------

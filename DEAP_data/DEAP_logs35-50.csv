@@ -1,0 +1,6 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+I.43.31,mob*kb*T,"add(ARG0, add(mul(add(mul(ARG1, ARG2), tan(ARG2)), ARG0), tan(ARG0)))","(137143.13350340107,)",6.631917476654053
+I.43.43,1/(gamma-1)*kb*v/A,"div(ARG2, ARG3)","(9.023992314981884,)",9.256532430648804
+I.44.4,n*kb*T*ln(V2/V1),"mul(mul(ARG3, add(add(ARG1, ARG3), ARG1)), ARG0)","(350412825303.32874,)",5.292754888534546
+I.47.23,sqrt(gamma*pr/rho),"sqrt(add(add(add(ARG2, add(sub(ARG2, ARG0), ARG1)), add(ARG2, ARG1)), ARG1))","(16.930827374945846,)",7.113091468811035
+I.48.2,m*c**2/sqrt(1-v**2/c**2),"mul(ARG2, mul(ARG1, add(add(ARG2, ARG2), ARG2)))","(650034409575.333,)",3.1127936840057373

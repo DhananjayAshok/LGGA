@@ -1,0 +1,16 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+II.34.2,q*v*r/2,,0,0
+II.34.11,g_*q*B/(2*m),,0,0
+II.34.29a,q*h/(4*pi*m),,0,0
+II.34.29b,g_*mom*B*Jz/(h/(2*pi)),,0,0
+II.35.18,n_0/(exp(mom*B/(kb*T))+exp(-mom*B/(kb*T))),,0,0
+II.35.21,n_rho*mom*tanh(mom*B/(kb*T)),,0,0
+II.36.38,mom*H/(kb*T)+(mom*alpha)/(epsilon*c**2*kb*T)*M,,0,0
+II.37.1,mom*(1+chi)*B,,0,0
+II.38.3,Y*A*x/d,,0,0
+II.38.14,Y/(2*(1+sigma)),,0,0
+III.4.32,1/(exp((h/(2*pi))*omega/(kb*T))-1),,0,0
+III.4.33,(h/(2*pi))*omega/(exp((h/(2*pi))*omega/(kb*T))-1),,0,0
+III.7.38,2*mom*B/(h/(2*pi)),,0,0
+III.8.54,sin(E_n*t/(h/(2*pi)))**2,,0,0
+III.9.52,(p_d*Ef*t/(h/(2*pi)))*sin((omega-omega_0)*t/2)**2/((omega-omega_0)*t/2)**2,,0,0

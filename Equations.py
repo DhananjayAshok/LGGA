@@ -201,6 +201,7 @@ def I2513(inputs):
 
 
 def I262(inputs):
+    # Can only take inputs within a certain range
     n = get_column(inputs, 0)
     theta2 = get_column(inputs, 1)
     return arcsin(n*sin(theta2))

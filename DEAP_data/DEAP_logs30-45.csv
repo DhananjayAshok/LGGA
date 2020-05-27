@@ -1,0 +1,16 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+I.30.5,arcsin(lambd/(n*d)),"div(div(ARG0, ARG1), ARG2)","(0.0011875373673523363,)",14.46442723274231
+I.32.5,q**2*a**2/(6*pi*epsilon*c**3),"div(sub(sin(ARG1), sin(exp(sub(exp(div(ARG1, ARG3)), exp(ARG3))))), sqrt(ARG2))","(0.0555350341836933,)",21.30944323539734
+I.32.17,(1/2*epsilon*c*Ef**2)*(8*pi*r**2/3)*(omega**4/(omega**2-omega_0**2)**2),"mul(mul(sqrt(mul(ARG5, ARG1)), mul(sqrt(mul(ARG5, ARG1)), ARG5)), mul(add(ARG3, ARG1), mul(sqrt(mul(ARG5, ARG4)), add(ARG3, mul(sqrt(mul(ARG5, ARG1)), add(ARG3, ARG5))))))","(array([1.7815507e+29]),)",10.126373529434204
+I.34.8,q*v*B/p,"mul(add(add(ARG0, ARG0), ARG0), add(add(add(ARG2, ARG0), add(add(add(add(ARG2, ARG2), add(add(ARG0, ARG0), ARG1)), ARG0), ARG0)), ARG0))","(217828455995.64728,)",8.696154594421387
+I.34.1,omega_0/(1-v/c),"div(mul(ARG1, ARG1), add(ARG0, ARG0))","(161958.4974089129,)",4.77297306060791
+I.34.14,(1+v/c)/sqrt(1-v**2/c**2)*omega_0,"sub(add(sin(sub(ARG1, cos(tan(sub(ARG1, ARG2))))), ARG2), tan(sub(ARG1, ARG2)))","(777.3436032243009,)",6.360671281814575
+I.34.27,(h/(2*pi))*omega,"mul(sqrt(ARG1), add(mul(cos(ARG1), ARG0), add(ARG1, ARG0)))","(370794.2804574569,)",9.790232419967651
+I.37.4,I1+I2+2*sqrt(I1*I2)*cos(delta),"add(tan(ARG0), ARG1)","(9565.374252327842,)",5.3051981925964355
+I.38.12,4*pi*epsilon*(h/(2*pi))**2/(m*q**2),"div(ARG1, ARG3)","(5.072091394640793,)",5.114141225814819
+I.39.1,3/2*pr*V,"mul(ARG0, add(ARG1, tan(ARG1)))","(46586022.88952528,)",8.86838960647583
+I.39.11,1/(gamma-1)*pr*V,"add(add(tan(ARG0), ARG2), ARG2)","(96607.68100061556,)",6.292976379394531
+I.39.22,n*kb*T/V,,0,0.0
+I.40.1,n_0*exp(-m*g*x/(kb*T)),sin(ARG0),"(inf,)",10.478909015655518
+I.41.16,h/(2*pi)*omega**3/(pi**2*c**2*(exp((h/(2*pi))*omega/(kb*T))-1)),"div(mul(ARG4, ARG4), ARG3)","(370576.08499792556,)",9.004929542541504
+I.43.16,mu_drift*q*Volt/d,"add(ARG1, sub(sub(mul(sqrt(mul(ARG0, ARG0)), ARG3), div(sub(sub(mul(sqrt(mul(ARG0, ARG0)), ARG3), div(ARG1, ARG3)), sub(mul(ARG0, ARG1), ARG1)), ARG3)), sub(mul(ARG0, ARG1), ARG1)))","(473771771.12412053,)",9.821923017501831
