@@ -1,3 +1,3 @@
 Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-sine,sin(x),sin(ARG0),"(0.0005603480217595919,)",8.685337543487549
-pythogoras,sqrt(a**2 + b**2 ),"add(pow(ARG1, cos(sin(pow(pow(ARG1, cos(sin(ARG1))), cos(sin(ARG0)))))), ARG0)","(1926.9236847553555,)",17.620525360107422
+pythogoras,sin(x),"add(ARG0, sqrt(mul(add(sqrt(ARG1), add(ARG1, ARG1)), sqrt(add(ARG1, ARG1)))))","(1657.7662909823848,)",39.13030552864075
+sine,sqrt(a**2 + b**2 ),sin(ARG0),"(0.0005603480217595919,)",14.232489109039307

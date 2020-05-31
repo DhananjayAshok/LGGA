@@ -72,7 +72,7 @@ class DEAPLearningSystem(LearningSystem):
         self.mutation_prob = mutation_prob
         self.ngens = ngens
         self.func_list = func_list
-        self.addfunc = self.zero
+        self.addfunc = zero
         self.creator = creator
 
     def create_fitness(self):
@@ -160,13 +160,14 @@ class DEAPLearningSystem(LearningSystem):
         def eval(ind, X, y):
             self.func = gp.compile(ind, self.pset)
             mse = self._mse(self.func, X, y)
-            return mse
+            z = zero(self, X, y) 
+            return (mse + z,)
         self.toolbox.register('evaluate', eval, X=X , y=y)
         return
 
-    def _mse(self, func, X, y):
+    def get_result(self, func, X, y):
         """
-        Returns the mean square error of a function which can compute the value of f(X)
+        Returns a series that holds all the values func(X)
         """
         def temp(row):
                 try:
@@ -177,22 +178,33 @@ class DEAPLearningSystem(LearningSystem):
                     traceback.print_exc()
                     return 9999
         X['result'] = X.copy().apply(lambda row: temp(row), axis=1)
-        diff = X['result'] - y
+        to_return = X['result'].copy()
         X.drop('result', axis=1, inplace=True)
-        #print(np.mean(diff*2))
-        return (np.mean(diff**2), )
+        return to_return
+
+
+    def _mse(self, func, X, y):
+        """
+        Returns the mean square error of a function which can compute the value of f(X)
+        """
+        preds = self.get_result(func, X, y)
+        diff = preds - y
+        return np.mean(diff**2)
 
     def get_arity_from_X(self, X):
         return len(X.columns)
-
-    def zero(object, func, X, y):
-        return np.zeros(y.shape)
     #########################################################################
     
-    def set_add_func(func):
+    def set_add_func(self, func):
         """
         Set additional process.
-        func must be a function that takes in 4 parameters - object, func, X, y and returns an array of values of shape 
+        
+        Parameters
+        ---------------
+        fun : function(deaplearningsystemobject dls, X, y) -> float
+            Remember 
+                you can use dls.func to get the function to get the functional transformation
+                you can use dls.get_result to get the preds in a series
         """
         self.add_func = func
 
@@ -281,3 +293,21 @@ class DEAPLearningSystem(LearningSystem):
         except:
             print(f"Could not find Best model")
             return 0
+
+
+
+def zero(dls, X, y):
+    return 0
+
+
+def triangle_rule(dls, X, y):
+    weight = 5
+    func = dls.func
+    c = dls.get_result(func, X, y)
+    a = X['X0']
+    b = X['X1']
+    flags = a + b < c
+    nviolations = np.sum(flags)
+    return weight*nviolations
+    
+
