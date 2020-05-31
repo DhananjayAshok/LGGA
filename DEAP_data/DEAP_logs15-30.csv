@@ -1,16 +1,16 @@
 Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-I.14.4,1/2*k_spring*x**2,"mul(add(ARG0, add(add(ARG0, ARG0), ARG0)), add(add(ARG0, ARG1), add(add(ARG0, ARG1), ARG1)))","(1853743430949.1929,)",6.154243469238281
-I.15.3x,(x-u*t)/sqrt(1-u**2/c**2),"mul(sub(div(add(cos(ARG2), add(ARG2, add(ARG2, ARG1))), add(cos(ARG2), ARG1)), ARG1), add(ARG2, add(ARG2, div(add(ARG2, ARG1), add(ARG3, ARG1)))))","(24251277.356927287,)",8.587270021438599
-I.15.3t,(t-u*x/c**2)/sqrt(1-u**2/c**2),"sub(add(add(cos(ARG3), ARG2), ARG2), sin(add(ARG2, sin(add(ARG2, ARG2)))))","(3694.52204010886,)",4.322321653366089
-I.15.1,m_0*v/sqrt(1-v**2/c**2),"add(sub(sub(ARG0, ARG2), sqrt(mul(mul(sub(ARG2, ARG1), sqrt(ARG2)), sqrt(ARG2)))), mul(mul(sub(ARG2, ARG1), sqrt(ARG2)), sqrt(ARG2)))","(array([1.79276703e+08]),)",8.79790186882019
-I.16.6,(u+v)/(1+u*v/c**2),"sub(ARG0, ARG2)","(152559.0995988624,)",5.050915241241455
-I.18.4,(m1*r1+m2*r2)/(m1+m2),"add(sub(ARG0, ARG1), ARG2)","(60961.7331755584,)",5.276080131530762
-I.18.12,r*F*sin(theta),"add(add(add(ARG1, ARG1), add(add(ARG1, add(ARG1, add(add(ARG1, add(add(ARG1, add(add(ARG1, add(ARG1, ARG1)), ARG1)), add(ARG1, add(add(ARG1, add(add(ARG1, add(ARG1, ARG1)), ARG1)), ARG1)))), ARG1))), add(ARG1, add(add(ARG1, add(ARG1, add(add(add(ARG1, add(add(ARG1, add(ARG1, ARG1)), add(ARG1, add(add(ARG1, add(add(ARG1, add(ARG1, ARG1)), ARG1)), ARG1)))), ARG1), add(sqrt(sub(ARG0, ARG1)), add(add(ARG1, add(ARG1, ARG1)), ARG1))))), ARG1)))), add(ARG1, add(add(ARG1, add(add(ARG1, add(ARG1, ARG1)), ARG1)), ARG1)))","(array([42801430.60675463]),)",6.4861156940460205
-I.18.14,m*r*v*sin(theta),"mul(ARG0, sub(ARG3, sub(sub(ARG2, ARG3), sub(tan(ARG2), sub(ARG1, sub(ARG3, sub(sub(ARG2, ARG3), sub(ARG3, ARG0))))))))","(37246955998.865486,)",5.783759832382202
-I.24.6,1/2*m*(omega**2+omega_0**2)*1/2*x**2,"exp(div(ARG0, sqrt(sub(ARG1, ARG3))))","(1.1551022635810249e+19,)",10.871657133102417
-I.25.13,q/C,"div(ARG0, ARG1)","(0.0016878727665663267,)",9.606883525848389
-I.26.2,arcsin(n*sin(theta2)),sqrt(cos(ARG1)),"(nan,)",4.8783180713653564
-I.27.6,1/(1/d1+n/d2),"sin(div(ARG1, add(div(div(ARG0, sin(ARG0)), ARG2), ARG2)))","(0.043296253289662565,)",12.274147987365723
-I.29.4,omega/c,"div(ARG0, ARG0)","(0.0016358883531919423,)",9.513015747070312
-I.29.16,sqrt(x1**2+x2**2-2*x1*x2*cos(theta1-theta2)),"sqrt(sub(mul(ARG1, ARG1), add(ARG1, add(ARG0, ARG0))))","(3617.9999539628698,)",8.66348385810852
-I.30.3,Int_0*sin(n*theta/2)**2/sin(theta/2)**2,"sub(ARG0, sqrt(sub(div(ARG0, ARG1), mul(ARG1, ARG2))))","(array([8443.06179949]),)",6.238701581954956
+I.14.4,1/2*k_spring*x**2,"mul(sqrt(mul(mul(ARG1, mul(sqrt(add(ARG1, ARG1)), add(ARG1, ARG1))), ARG1)), ARG0)","(array([8.49832021e+10]),)",64.29177904129028
+I.15.3x,(x-u*t)/sqrt(1-u**2/c**2),"add(ARG2, sub(sub(add(ARG1, sub(mul(ARG1, div(mul(mul(ARG1, ARG0), cos(ARG2)), add(ARG1, div(ARG2, ARG2)))), ARG0)), mul(ARG1, ARG2)), mul(ARG2, ARG1)))","(15443783.837897807,)",63.46361994743347
+I.15.3t,(t-u*x/c**2)/sqrt(1-u**2/c**2),"add(ARG2, tan(add(ARG0, ARG0)))","(2031.0847074077224,)",22.81572723388672
+I.15.1,m_0*v/sqrt(1-v**2/c**2),"mul(add(ARG0, tan(ARG2)), add(ARG1, add(ARG1, ARG1)))","(19991580.946305722,)",27.26524543762207
+I.16.6,(u+v)/(1+u*v/c**2),"add(ARG1, sub(mul(cos(sqrt(mul(cos(sqrt(ARG0)), sub(add(ARG0, ARG0), add(ARG1, add(ARG1, ARG2)))))), sub(add(ARG0, sin(ARG0)), add(add(ARG1, ARG2), ARG2))), add(ARG1, sub(div(exp(sin(ARG1)), ARG2), mul(cos(sqrt(ARG0)), sub(add(ARG0, ARG0), add(ARG1, add(ARG1, ARG2))))))))","(30855.54855710818,)",54.13538980484009
+I.18.4,(m1*r1+m2*r2)/(m1+m2),"sub(sub(add(ARG2, cos(tan(ARG0))), ARG1), div(ARG1, tan(sqrt(ARG1))))","(18154.113889226326,)",65.84121179580688
+I.18.12,r*F*sin(theta),"add(mul(sin(ARG2), mul(ARG1, ARG0)), tan(add(add(ARG1, add(ARG1, ARG2)), mul(sin(ARG2), mul(ARG1, ARG2)))))","(1.5509500848577242,)",46.121746301651
+I.18.14,m*r*v*sin(theta),"mul(add(add(add(ARG0, ARG0), add(add(add(ARG0, add(add(ARG0, ARG0), add(add(add(add(add(add(add(ARG0, ARG3), add(ARG0, sub(sin(ARG1), sin(tan(ARG1))))), ARG3), ARG0), ARG0), ARG3), ARG0))), ARG3), ARG0)), ARG0), sub(sub(ARG3, ARG2), div(sub(ARG0, ARG0), exp(cos(ARG0)))))","(8500474329.372133,)",47.429057121276855
+I.24.6,1/2*m*(omega**2+omega_0**2)*1/2*x**2,"exp(sqrt(div(sub(mul(ARG2, mul(ARG2, sqrt(ARG1))), div(div(sub(mul(mul(mul(ARG3, ARG2), add(ARG3, ARG0)), mul(ARG2, sqrt(ARG1))), cos(div(ARG3, ARG1))), sub(ARG0, ARG3)), sub(ARG0, ARG3))), sub(ARG0, ARG3))))","(6.141839642983529e+18,)",56.40780997276306
+I.25.13,q/C,"div(ARG0, ARG1)","(0.0016878727665663267,)",36.73865723609924
+I.26.2,arcsin(n*sin(theta2)),"sub(ARG1, ARG0)","(nan,)",18.833917140960693
+I.27.6,1/(1/d1+n/d2),"div(div(ARG1, ARG0), div(ARG2, ARG0))","(0.0015474383938162526,)",40.57327389717102
+I.29.4,omega/c,"cos(div(sub(div(ARG0, ARG0), tan(sub(div(ARG1, ARG1), ARG0))), ARG1))","(0.00041094728425118427,)",56.82352352142334
+I.29.16,sqrt(x1**2+x2**2-2*x1*x2*cos(theta1-theta2)),"sqrt(mul(sub(tan(sqrt(ARG2)), ARG0), sub(sin(sin(ARG2)), ARG0)))","(2276.713585330048,)",35.737754344940186
+I.30.3,Int_0*sin(n*theta/2)**2/sin(theta/2)**2,ARG0,"(9169.409275034213,)",19.17835283279419

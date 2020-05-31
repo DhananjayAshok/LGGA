@@ -19,7 +19,7 @@ class DEAPLearningSystem(LearningSystem):
     """
     Learning Algorithm that implements the DEAP Python Library
     """
-    def __init__(self, path="DEAP_data", verbose=False, population_size=40, crossover_prob=0.5, mutation_prob=0.2, ngens=20, func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
+    def __init__(self, path="DEAP_data", verbose=False, population_size=100, crossover_prob=0.4, mutation_prob=0.4, ngens=30, func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
         """
         Parameters
         -----------
@@ -72,6 +72,7 @@ class DEAPLearningSystem(LearningSystem):
         self.mutation_prob = mutation_prob
         self.ngens = ngens
         self.func_list = func_list
+        self.addfunc = self.zero
         self.creator = creator
 
     def create_fitness(self):
@@ -158,7 +159,8 @@ class DEAPLearningSystem(LearningSystem):
         """
         def eval(ind, X, y):
             self.func = gp.compile(ind, self.pset)
-            return self._mse(self.func, X, y)
+            mse = self._mse(self.func, X, y)
+            return mse
         self.toolbox.register('evaluate', eval, X=X , y=y)
         return
 
@@ -178,11 +180,21 @@ class DEAPLearningSystem(LearningSystem):
         diff = X['result'] - y
         X.drop('result', axis=1, inplace=True)
         #print(np.mean(diff*2))
-        return (np.mean(diff**2),)
+        return (np.mean(diff**2), )
 
     def get_arity_from_X(self, X):
         return len(X.columns)
+
+    def zero(object, func, X, y):
+        return np.zeros(y.shape)
     #########################################################################
+    
+    def set_add_func(func):
+        """
+        Set additional process.
+        func must be a function that takes in 4 parameters - object, func, X, y and returns an array of values of shape 
+        """
+        self.add_func = func
 
     def reset(self):
         """

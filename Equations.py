@@ -396,8 +396,6 @@ def sine(inputs):
     x = get_column(inputs, 0)
     return sin(x)
 
-
-
 equation_dict = {
     "sine"   : sine,
     "I.6.2a" : I62a,

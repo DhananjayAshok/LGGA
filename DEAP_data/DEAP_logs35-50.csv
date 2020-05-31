@@ -1,6 +1,6 @@
 Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-I.43.31,mob*kb*T,"add(ARG0, add(mul(add(mul(ARG1, ARG2), tan(ARG2)), ARG0), tan(ARG0)))","(137143.13350340107,)",6.631917476654053
-I.43.43,1/(gamma-1)*kb*v/A,"div(ARG2, ARG3)","(9.023992314981884,)",9.256532430648804
-I.44.4,n*kb*T*ln(V2/V1),"mul(mul(ARG3, add(add(ARG1, ARG3), ARG1)), ARG0)","(350412825303.32874,)",5.292754888534546
-I.47.23,sqrt(gamma*pr/rho),"sqrt(add(add(add(ARG2, add(sub(ARG2, ARG0), ARG1)), add(ARG2, ARG1)), ARG1))","(16.930827374945846,)",7.113091468811035
-I.48.2,m*c**2/sqrt(1-v**2/c**2),"mul(ARG2, mul(ARG1, add(add(ARG2, ARG2), ARG2)))","(650034409575.333,)",3.1127936840057373
+I.43.31,mob*kb*T,"add(cos(add(sin(cos(sin(ARG1))), sqrt(div(ARG1, ARG1)))), mul(ARG2, mul(ARG1, ARG0)))","(0.021313074205108938,)",27.998663187026978
+I.43.43,1/(gamma-1)*kb*v/A,"tan(add(add(add(ARG2, ARG3), div(exp(cos(add(sqrt(ARG1), ARG3))), add(ARG2, ARG3))), div(exp(ARG0), div(exp(ARG0), tan(ARG0)))))","(13.766547165252728,)",53.40613627433777
+I.44.4,n*kb*T*ln(V2/V1),"mul(add(ARG2, mul(add(ARG2, mul(ARG3, sqrt(ARG3))), ARG2)), div(ARG0, ARG4))","(172365984453.52936,)",28.17702841758728
+I.47.23,sqrt(gamma*pr/rho),"sqrt(sub(add(add(ARG1, ARG2), add(add(sin(ARG0), add(add(ARG1, mul(div(ARG2, ARG2), div(ARG1, ARG0))), add(add(ARG1, ARG2), sin(ARG0)))), sin(ARG0))), ARG0))","(16.630277619082964,)",28.38364005088806
+I.48.2,m*c**2/sqrt(1-v**2/c**2),"add(mul(mul(ARG1, add(sqrt(ARG1), add(ARG1, ARG1))), ARG1), add(sqrt(sqrt(ARG1)), add(mul(ARG1, add(div(add(ARG0, ARG1), ARG1), add(ARG1, ARG1))), ARG1)))","(80672225674.28621,)",22.462913751602173

@@ -1,0 +1,3 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+sine,sin(x),sin(ARG0),"(0.0005603480217595919,)",8.317849159240723
+pythogoras,sqrt(a**2 + b**2 ),"add(ARG1, div(mul(ARG0, ARG0), add(ARG0, ARG1)))","(339.8716740297158,)",22.23194408416748
