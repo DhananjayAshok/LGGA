@@ -45,6 +45,9 @@ def power(x1, x2):
     else:
         return val
 
+def square(x1):
+    return power(x1, 2)
+
 def sin(x):
     return np.sin(x)
 
@@ -113,4 +116,5 @@ func_dict = {
     "max" : max,
     "min" : min,
     "sqrt": sqrt,
+    "square": square
     }

@@ -72,7 +72,7 @@ class DEAPLearningSystem(LearningSystem):
         self.mutation_prob = mutation_prob
         self.ngens = ngens
         self.func_list = func_list
-        self.addfunc = zero
+        self.add_func = zero
         self.creator = creator
 
     def create_fitness(self):
@@ -160,8 +160,8 @@ class DEAPLearningSystem(LearningSystem):
         def eval(ind, X, y):
             self.func = gp.compile(ind, self.pset)
             mse = self._mse(self.func, X, y)
-            z = zero(self, X, y) 
-            return (mse + z,)
+            a = self.add_func(self, X, y) 
+            return (mse + a,)
         self.toolbox.register('evaluate', eval, X=X , y=y)
         return
 
@@ -182,7 +182,6 @@ class DEAPLearningSystem(LearningSystem):
         X.drop('result', axis=1, inplace=True)
         return to_return
 
-
     def _mse(self, func, X, y):
         """
         Returns the mean square error of a function which can compute the value of f(X)
@@ -190,6 +189,24 @@ class DEAPLearningSystem(LearningSystem):
         preds = self.get_result(func, X, y)
         diff = preds - y
         return np.mean(diff**2)
+
+    def reg_score(self, X, y):
+        """
+        registered the scoring method we wanna use in this function
+
+        Currently uses mean squared error
+        
+        Parameters
+        ------------
+        X, y - Data columns and target series
+        """
+        def score(ind, X, y):
+            self.func = gp.compile(ind, self.pset)
+            mse = self._mse(self.func, X, y)
+            violation = self.add_func(self, X, y)
+            return (mse, violation)
+        self.toolbox.register('score', score, X=X , y=y)
+        return
 
     def get_arity_from_X(self, X):
         return len(X.columns)
@@ -233,7 +250,7 @@ class DEAPLearningSystem(LearningSystem):
         self.reg_mutation()
         self.reg_mating()
         self.reg_eval(X, y)
-
+        self.reg_score(X, y)
         return
         
     def set_func_list(self, func_list):
@@ -283,13 +300,11 @@ class DEAPLearningSystem(LearningSystem):
 
     def score(self, X, y):
         """
-        Returns the evaluation on this model as per its own evaluation metric
-
-        MIGHT NEED TO CHANGE THIS TO SOMETHING STANDARD 
+        Returns the evaluation on this model as per its mse
         """
         try:
             best = self.hof[0]
-            return self.toolbox.evaluate(best)
+            return self.toolbox.score(best)
         except:
             print(f"Could not find Best model")
             return 0
@@ -300,8 +315,7 @@ def zero(dls, X, y):
     return 0
 
 
-def triangle_rule(dls, X, y):
-    weight = 5
+def triangle_rule(dls, X, y, weight=1000):
     func = dls.func
     c = dls.get_result(func, X, y)
     a = X['X0']
@@ -309,5 +323,18 @@ def triangle_rule(dls, X, y):
     flags = a + b < c
     nviolations = np.sum(flags)
     return weight*nviolations
+
+
+def semiperimeter_rule(dls, X, y, weight=1000):
+    func = dls.func
+    predc = dls.get_result(func, X, y)
+    a = X['X0']
+    b = X['X1']
+    c = y
+    s = (a + b + c)/2
+    flags = (s-a)*(s-b) != s*(s-c)
+    nviolations = np.sum(flags)
+    return weight*nviolations
+
     
 
