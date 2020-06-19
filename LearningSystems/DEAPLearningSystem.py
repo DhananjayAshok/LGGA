@@ -61,6 +61,7 @@ class DEAPLearningSystem(LearningSystem):
 
             'exp' : exponential (self defined), arity=1
             'pow' : power (self defined), arity=2
+            'square': ^2, arity=1
 
         """
         LearningSystem.__init__(self)
@@ -190,23 +191,20 @@ class DEAPLearningSystem(LearningSystem):
         diff = preds - y
         return np.mean(diff**2)
 
-    def reg_score(self, X, y):
+    def ind_score(self, ind, X, y):
         """
-        registered the scoring method we wanna use in this function
+        Method to score and indivudual
 
-        Currently uses mean squared error
+        Currently uses mean squared error, violations
         
         Parameters
         ------------
         X, y - Data columns and target series
         """
-        def score(ind, X, y):
-            self.func = gp.compile(ind, self.pset)
-            mse = self._mse(self.func, X, y)
-            violation = self.add_func(self, X, y)
-            return (mse, violation)
-        self.toolbox.register('score', score, X=X , y=y)
-        return
+        self.func = gp.compile(ind, self.pset)
+        mse = self._mse(self.func, X, y)
+        violation = self.add_func(self, X, y)
+        return (mse, violation)
 
     def get_arity_from_X(self, X):
         return len(X.columns)
@@ -250,7 +248,6 @@ class DEAPLearningSystem(LearningSystem):
         self.reg_mutation()
         self.reg_mating()
         self.reg_eval(X, y)
-        self.reg_score(X, y)
         return
         
     def set_func_list(self, func_list):
@@ -258,25 +255,7 @@ class DEAPLearningSystem(LearningSystem):
         Parameters
         -----------
         func_set : list
-            List of strings i.e names of functions to include / operations to consider
-            current options include
-            ‘add’ : addition, arity=2.
-            ‘sub’ : subtraction, arity=2.
-            ‘mul’ : multiplication, arity=2.
-            ‘div’ : protected division where a denominator near-zero returns 1., arity=2.
-            ‘sqrt’ : protected square root where the absolute value of the argument is used, arity=1.
-            ‘log’ : protected log where the absolute value of the argument is used and a near-zero argument returns 0., arity=1.
-            ‘abs’ : absolute value, arity=1.
-            ‘neg’ : negative, arity=1.
-            ‘inv’ : protected inverse where a near-zero argument returns 0., arity=1.
-            ‘max’ : maximum, arity=2.
-            ‘min’ : minimum, arity=2.
-            ‘sin’ : sine (radians), arity=1.
-            ‘cos’ : cosine (radians), arity=1.
-            ‘tan’ : tangent (radians), arity=1.
-
-            'exp' : exponential (self defined), arity=1
-            'pow' : power (self defined), arity=2
+            Refer to Customization.py for list of functions
         """
         self.func_list = func_list
         return
@@ -304,7 +283,7 @@ class DEAPLearningSystem(LearningSystem):
         """
         try:
             best = self.hof[0]
-            return self.toolbox.score(best)
+            return self.ind_score(best, X, y)
         except:
             print(f"Could not find Best model")
             return 0
@@ -321,20 +300,20 @@ def triangle_rule(dls, X, y, weight=1000):
     a = X['X0']
     b = X['X1']
     flags = a + b < c
-    nviolations = np.sum(flags)
+    nviolations = np.mean(flags)*100
     return weight*nviolations
 
 
-def semiperimeter_rule(dls, X, y, weight=1000):
+def semiperimeter_rule(dls, X, y, weight=1000, threshold=2):
     func = dls.func
     predc = dls.get_result(func, X, y)
     a = X['X0']
     b = X['X1']
     c = y
     s = (a + b + c)/2
-    flags = (s-a)*(s-b) != s*(s-c)
-    nviolations = np.sum(flags)
-    return weight*nviolations
+    flags = np.abs((s-a)*(s-b) - s*(s-predc)) > threshold 
+    rviolations = np.mean(flags)*100
+    return weight*rviolations
 
     
 

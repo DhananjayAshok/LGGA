@@ -6,11 +6,34 @@ The input to these functions can be either a float/ int or a 1 entry panda serie
 
 Should return a pandas series or a number doesn't matter (I think)
 
+
+Currently Defined Functions
+func_set : list
+            List of strings i.e names of functions to include / operations to consider
+            current options include
+            ‘add’ : addition, arity=2.
+            ‘sub’ : subtraction, arity=2.
+            ‘mul’ : multiplication, arity=2.
+            ‘div’ : protected division where a denominator near-zero returns 1., arity=2.
+            ‘sqrt’ : protected square root where the absolute value of the argument is used, arity=1.
+            ‘log’ : protected log where the absolute value of the argument is used and a near-zero argument returns 0., arity=1.
+            ‘abs’ : absolute value, arity=1.
+            ‘neg’ : negative, arity=1.
+            ‘inv’ : protected inverse where a near-zero argument returns 0., arity=1.
+            ‘max’ : maximum, arity=2.
+            ‘min’ : minimum, arity=2.
+            ‘sin’ : sine (radians), arity=1.
+            ‘cos’ : cosine (radians), arity=1.
+            ‘tan’ : tangent (radians), arity=1.
+            'exp' : exponential , arity=1
+            'pow' : power , arity=2
+            'square': ^2, arity=1
 """
+
+
 import numpy as np
 import pandas as pd
 import operator
-
 
 
 def is_series(x):

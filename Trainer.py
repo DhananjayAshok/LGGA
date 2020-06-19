@@ -40,7 +40,7 @@ class Trainer(object):
     def set_noise_range(self, noise_range):
         self.noise_range = noise_range
 
-    def predict_single_equation(self, equation_id, learning_system, no_samples=1000, input_range=(-100, 100)):
+    def predict_single_equation(self, equation_id, learning_system, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100)):
         """
         Returns predicted equation, error metric and time taken for fitting
         
@@ -64,14 +64,14 @@ class Trainer(object):
         string, float, float
         """
         try:
-            df = create_dataset(equation_id, no_samples = no_samples,input_range=input_range, path=self.path, save=self.save, load=self.load, noise_range=self.noise_range, master_file=self.master_file).dropna()
+            df = create_dataset(equation_id, no_samples = no_test_samples,input_range=input_range, path=self.path, save=self.save, load=self.load, noise_range=self.noise_range, master_file=self.master_file).dropna()
             X = df.drop('target', axis=1)
             y = df['target']
         except:
-            traceback.print_exc()
+            traceback.print_exec()
             print(f"Error on equation {equation_id} skipping")
             return '', 0, 0
-        no_samples = min(no_samples, len(y))
+        no_samples = min(no_train_samples, len(y))
         start = time.time()
         try:
             hist = learning_system.fit(X[:no_samples], y[:no_samples])
@@ -83,7 +83,7 @@ class Trainer(object):
         return learning_system.get_predicted_equation(), learning_system.score(X, y) , end-start
 
 
-    def predict_equations(self, learning_system, eqs=None, save_every=15, no_samples=1000, input_range=(-100, 100)):
+    def predict_equations(self, learning_system, eqs=None, save_every=15, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100)):
         """
         Creates and Returns a DataFrame with columns real_equation, predicted_equation, error metric, time taken (s)
         Also saves this DataFrame to the path variable of this LearningSystem object.
@@ -138,7 +138,7 @@ class Trainer(object):
         n = 0
         for i in tqdm(range(neqs)):
             eq = eqs[i]
-            equation, error, time = self.predict_single_equation(eq, learning_system, no_samples=no_samples, input_range=input_range)
+            equation, error, time = self.predict_single_equation(eq, learning_system, no_train_samples=no_train_samples, no_test_samples=no_test_samples, input_range=input_range)
             logs.append([eq, master_data['Formula'][i], equation, error, time])
             global_logs.append([eq, master_data['Formula'][i], equation, error, time])
             n += 1
