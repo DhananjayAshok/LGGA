@@ -335,12 +335,12 @@ class Algorithms():
         Not defined here - pop, toolbox, cxpb, mutpb, ngen
     """
     mu = 5
-    lambda_ = 3
+    lambda_ = 8
 
     algo_dict = {
         "simple" : algorithms.eaSimple,
-        "mu+lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuPlusLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutb=mutb, ngen=ngen, halloffame=halloffame, verbose=verbose),
-        "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutb=mutb, ngen=ngen, halloffame=halloffame, verbose=verbose),
+        "mu+lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuPlusLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),
+        "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),
 
         }
 
