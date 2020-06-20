@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore")
 
 from LearningSystems.LearningSystem import LearningSystem
 from Customization import *
+from Constraints import *
 
 from deap import base
 from deap import creator
@@ -19,7 +20,7 @@ class DEAPLearningSystem(LearningSystem):
     """
     Learning Algorithm that implements the DEAP Python Library
     """
-    def __init__(self, path="DEAP_data", verbose=False, population_size=100, crossover_prob=0.4, mutation_prob=0.4, ngens=30, func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
+    def __init__(self, path="DEAP_data", verbose=False, population_size=100, crossover_prob=0.4, mutation_prob=0.4, ngens=30, algorithm="simple", func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
         """
         Parameters
         -----------
@@ -41,27 +42,15 @@ class DEAPLearningSystem(LearningSystem):
         ngens : int
             Number of generations we wish to train for
 
+        algorithm: string
+            Algorithm to use for training. Current options
+            simple: eaSimple
+            mu+lambda: eaMuPlusLambda
+            mu,lambda: eaMuCommaLambda
+
         func_set : list
             List of strings i.e names of functions to include / operations to consider
-            current options include
-            ‘add’ : addition, arity=2.
-            ‘sub’ : subtraction, arity=2.
-            ‘mul’ : multiplication, arity=2.
-            ‘div’ : protected division where a denominator near-zero returns 1., arity=2.
-            ‘sqrt’ : protected square root where the absolute value of the argument is used, arity=1.
-            ‘log’ : protected log where the absolute value of the argument is used and a near-zero argument returns 0., arity=1.
-            ‘abs’ : absolute value, arity=1.
-            ‘neg’ : negative, arity=1.
-            ‘inv’ : protected inverse where a near-zero argument returns 0., arity=1.
-            ‘max’ : maximum, arity=2.
-            ‘min’ : minimum, arity=2.
-            ‘sin’ : sine (radians), arity=1.
-            ‘cos’ : cosine (radians), arity=1.
-            ‘tan’ : tangent (radians), arity=1.
-
-            'exp' : exponential (self defined), arity=1
-            'pow' : power (self defined), arity=2
-            'square': ^2, arity=1
+            Check Customizations for full list
 
         """
         LearningSystem.__init__(self)
@@ -72,8 +61,9 @@ class DEAPLearningSystem(LearningSystem):
         self.crossover_prob = crossover_prob
         self.mutation_prob = mutation_prob
         self.ngens = ngens
+        self.algorithm = algorithm
         self.func_list = func_list
-        self.add_func = zero
+        self.add_func = lambda dls, x, y : 0 # Zero Function Default
         self.creator = creator
 
     def create_fitness(self):
@@ -148,6 +138,15 @@ class DEAPLearningSystem(LearningSystem):
         self.toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
         return
 
+    def eval_helper(self, ind, X, y):
+        """
+        Given an X and a y returns the mse + addfunc of a given ind
+        """
+        self.func = gp.compile(ind, self.pset)
+        mse = self._mse(self.func, X, y)
+        a = self.add_func(self, X, y) 
+        return (mse + a,)
+
     def reg_eval(self, X, y):
         """
         registered the evaluation method we wanna use in this function
@@ -158,13 +157,21 @@ class DEAPLearningSystem(LearningSystem):
         ------------
         X, y - Data columns and target series
         """
-        def eval(ind, X, y):
-            self.func = gp.compile(ind, self.pset)
-            mse = self._mse(self.func, X, y)
-            a = self.add_func(self, X, y) 
-            return (mse + a,)
-        self.toolbox.register('evaluate', eval, X=X , y=y)
+        self.toolbox.register('evaluate', self.eval_helper, X=X , y=y)
         return
+
+    def reg_gen_eval(self, generator):
+        """
+        registered the evaluation method using a generator
+
+        Parameters
+        --------------
+        generator - a function which when called returns an X, y 
+        """
+        def eval(ind, gen):
+            X, y = gen()
+            return self.eval_helper(ind, X, y)
+        self.toolbox.register('evaluate', eval, gen=generator)
 
     def get_result(self, func, X, y):
         """
@@ -223,6 +230,9 @@ class DEAPLearningSystem(LearningSystem):
         """
         self.add_func = func
 
+    def set_algorithm(self, algorithm):
+        self.algorithm = algorithm
+
     def reset(self):
         """
         Clears all working data so it was as if this object was a newly created DEAPLearnSystem immediately after initialization
@@ -238,18 +248,30 @@ class DEAPLearningSystem(LearningSystem):
 
     def build_model(self, X, y, tournsize=3):
         """
-        Runs the builder functions in order
+        Runs the builder functions in order with data
         """
         arity = self.get_arity_from_X(X)
+        self.invariant_build_model(arity, tournsize)
+        self.reg_eval(X, y)
+        return
+
+    def build_gen_model(self, generator, tournsize=3):
+        """
+        Runs builder functions in order with generator
+        """
+        smallx, smally = generator(no_samples=1)
+        arity = self.get_arity_from_X(smallx)
+        self.invariant_build_model(arity, tournsize)
+        self.reg_gen_eval(generator)
+
+    def invariant_build_model(self, arity, tournsize):
         self.create_fitness()
         self.create_and_reg_individual(arity)
         self.create_and_reg_population()
         self.reg_selection(tournsize)
         self.reg_mutation()
         self.reg_mating()
-        self.reg_eval(X, y)
-        return
-        
+
     def set_func_list(self, func_list):
         """
         Parameters
@@ -263,16 +285,32 @@ class DEAPLearningSystem(LearningSystem):
     def __str__(self):
         return "DEAP"
 
-    def fit(self, X, y):
+    def train(self):
         """
+        Assumes that model is fully built
+
         Currently uses a simple algorithm and returns the hall of famer
         Clears the existing trained model every time fit is called
         """
+        self.hof = tools.HallOfFame(1)
+        pop, log = Algorithms.get_algorithm(self.algorithm)(population=self.toolbox.population(self.population_size), toolbox=self.toolbox, cxpb=self.crossover_prob, mutpb=self.mutation_prob, ngen=self.ngens, halloffame=self.hof, verbose=self.verbose)
+        return pop, log
+
+    def fit(self, X, y):
+        """
+        Fit using fixed X and y
+        """
         self.reset()
         self.build_model(X, y)
-        self.hof = tools.HallOfFame(1)
-        pop, log = algorithms.eaSimple(self.toolbox.population(self.population_size), self.toolbox, self.crossover_prob, self.mutation_prob, self.ngens, halloffame=self.hof, verbose=self.verbose)
-        return pop, log
+        return self.train()
+
+    def fit_gen(self, gen):
+        """
+        Fit using generator
+        """
+        self.reset()
+        self.build_gen_model(gen)
+        return self.train()
 
     def get_predicted_equation(self):
         return self.toolbox.clone(self.hof[0])
@@ -290,30 +328,39 @@ class DEAPLearningSystem(LearningSystem):
 
 
 
-def zero(dls, X, y):
-    return 0
+class Algorithms():
+    """
+    Class to hold all of the Algorithms used for DEAPLearningSystem
+    All hyperparameters than are unique to a particular function are defined here.
+        Not defined here - pop, toolbox, cxpb, mutpb, ngen
+    """
+    mu = 5
+    lambda_ = 3
+
+    algo_dict = {
+        "simple" : algorithms.eaSimple,
+        "mu+lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuPlusLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutb=mutb, ngen=ngen, halloffame=halloffame, verbose=verbose),
+        "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutb=mutb, ngen=ngen, halloffame=halloffame, verbose=verbose),
+
+        }
+
+    def get_algorithm(key):
+        """
+        Returns the algorithm function associated with the key
+        Defaults to eaSimple if key not found
+        """
+        if key not in Algorithms.algo_dict.keys():
+            print(f"Key {key} not found out of available algorithm options. Using Simple Algorithm")
+            algorithms.ea
+        return Algorithms.algo_dict.get(key, Algorithms.algo_dict.get("simple"))
+
+    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose):
+        """
+
+        """
+        pass
 
 
-def triangle_rule(dls, X, y, weight=1000):
-    func = dls.func
-    c = dls.get_result(func, X, y)
-    a = X['X0']
-    b = X['X1']
-    flags = a + b < c
-    nviolations = np.mean(flags)*100
-    return weight*nviolations
-
-
-def semiperimeter_rule(dls, X, y, weight=1000, threshold=2):
-    func = dls.func
-    predc = dls.get_result(func, X, y)
-    a = X['X0']
-    b = X['X1']
-    c = y
-    s = (a + b + c)/2
-    flags = np.abs((s-a)*(s-b) - s*(s-predc)) > threshold 
-    rviolations = np.mean(flags)*100
-    return weight*rviolations
 
     
 

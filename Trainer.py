@@ -3,6 +3,8 @@ import traceback
 import pandas as pd
 from tqdm import tqdm
 import time
+from Equations import equation_dict
+from Generators import *
 
 class Trainer(object):
     """
@@ -40,7 +42,7 @@ class Trainer(object):
     def set_noise_range(self, noise_range):
         self.noise_range = noise_range
 
-    def predict_single_equation(self, equation_id, learning_system, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100)):
+    def predict_single_equation(self, equation_id, learning_system, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100), use_gens=False):
         """
         Returns predicted equation, error metric and time taken for fitting
         
@@ -71,19 +73,39 @@ class Trainer(object):
             traceback.print_exec()
             print(f"Error on equation {equation_id} skipping")
             return '', 0, 0
-        no_samples = min(no_train_samples, len(y))
-        start = time.time()
-        try:
-            hist = learning_system.fit(X[:no_samples], y[:no_samples])
-        except:
-            traceback.print_exec()
-            print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")
-            return '', 0, 0
-        end = time.time()
+        if not use_gens:
+            no_samples = min(no_train_samples, len(y))
+            start = time.time()
+            try:
+                hist = learning_system.fit(X[:no_samples], y[:no_samples])
+            except:
+                traceback.print_exec()
+                print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")
+                return '', 0, 0
+            end = time.time()
+        else:
+            gen = None
+            if equation_id in equation_dict.keys():
+                gen = get_generator_generic(equation_id, no_samples=no_train_samples, input_range=input_range, noise_range=noise_range, master_file=master_file)
+            else:
+                if equation_id == "pythogoras":
+                    gen = get_generator_pythogoras(no_samples=no_train_samples, input_range=input_range)
+                else:
+                    print(f"Equation {equation_id} does not have a generator")
+                    return '', 0, 0
+            start = time.time()
+            try:
+                hist = learning_system.fit_gen(gen)
+            except:
+                traceback.print_exec()
+                print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")
+                return '', 0, 0
+            end = time.time()
+
         return learning_system.get_predicted_equation(), learning_system.score(X, y) , end-start
 
 
-    def predict_equations(self, learning_system, eqs=None, save_every=15, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100)):
+    def predict_equations(self, learning_system, eqs=None, save_every=15, no_train_samples=1000, no_test_samples=1000, input_range=(-100, 100), use_gens=False):
         """
         Creates and Returns a DataFrame with columns real_equation, predicted_equation, error metric, time taken (s)
         Also saves this DataFrame to the path variable of this LearningSystem object.
@@ -138,7 +160,7 @@ class Trainer(object):
         n = 0
         for i in tqdm(range(neqs)):
             eq = eqs[i]
-            equation, error, time = self.predict_single_equation(eq, learning_system, no_train_samples=no_train_samples, no_test_samples=no_test_samples, input_range=input_range)
+            equation, error, time = self.predict_single_equation(eq, learning_system, no_train_samples=no_train_samples, no_test_samples=no_test_samples, input_range=input_range, use_gens=use_gens)
             logs.append([eq, master_data['Formula'][i], equation, error, time])
             global_logs.append([eq, master_data['Formula'][i], equation, error, time])
             n += 1
