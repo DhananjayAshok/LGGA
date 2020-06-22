@@ -2,6 +2,7 @@ from inspect import signature
 import operator
 import traceback
 import warnings
+import random
 warnings.filterwarnings("ignore")
 
 
@@ -20,7 +21,7 @@ class DEAPLearningSystem(LearningSystem):
     """
     Learning Algorithm that implements the DEAP Python Library
     """
-    def __init__(self, path="DEAP_data", verbose=False, population_size=100, crossover_prob=0.4, mutation_prob=0.4, ngens=30, algorithm="simple", func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
+    def __init__(self, path="DEAP_data", verbose=False, population_size=100, crossover_prob=0.3, mutation_prob=0.9, ngens=30, algorithm="simple", func_list=['add', 'mul', 'sub', 'div', 'sin', 'cos', 'tan', 'exp', 'sqrt']):
         """
         Parameters
         -----------
@@ -118,7 +119,7 @@ class DEAPLearningSystem(LearningSystem):
         tournsize : int
             How many equations to select for every gen
         """
-        self.toolbox.register("select", tools.selTournament, tournsize=tournsize)
+        self.toolbox.register("select", tools.selBest)
         return
 
     def reg_mutation(self):
@@ -255,7 +256,7 @@ class DEAPLearningSystem(LearningSystem):
         self.reg_eval(X, y)
         return
 
-    def build_gen_model(self, generator, tournsize=3):
+    def build_gen_model(self, generator, tournsize=15):
         """
         Runs builder functions in order with generator
         """
@@ -293,7 +294,7 @@ class DEAPLearningSystem(LearningSystem):
         Clears the existing trained model every time fit is called
         """
         self.hof = tools.HallOfFame(1)
-        pop, log = Algorithms.get_algorithm(self.algorithm)(population=self.toolbox.population(self.population_size), toolbox=self.toolbox, cxpb=self.crossover_prob, mutpb=self.mutation_prob, ngen=self.ngens, halloffame=self.hof, verbose=self.verbose)
+        pop, log = get_algorithm(self.algorithm)(population=self.toolbox.population(self.population_size), toolbox=self.toolbox, cxpb=self.crossover_prob, mutpb=self.mutation_prob, ngen=self.ngens, halloffame=self.hof, verbose=self.verbose)
         return pop, log
 
     def fit(self, X, y):
@@ -337,28 +338,103 @@ class Algorithms():
     mu = 5
     lambda_ = 8
 
-    algo_dict = {
+
+    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 3.1415):
+        """
+        Implements the following basic ideas - 
+        1. Ensures the selected from the previous population are preserved if they beat the new population
+        2. Implements Early Stopping if the training loss stays constant for a given number of epochs
+        3. Implements target detection which terminates if error is below a certain threshold
+
+        """
+        early_stopping_counter = early_stopping
+        best_error = threshold + 9000
+        g = 0
+        while (g < ngen and early_stopping_counter !=0 and best_error > threshold):
+            
+            # Select the next generation individuals
+            offspring = toolbox.select(population, len(population)//10)
+            # Clone the selected individuals
+            offspring = list(map(toolbox.clone, offspring))
+
+            # Apply crossover on the offspring
+            for child1, child2 in zip(offspring[::2], offspring[1::2]):
+                if random.random() < cxpb:
+                    toolbox.mate(child1, child2)
+                    del child1.fitness.values
+                    del child2.fitness.values
+
+
+            # Apply mutation on the offspring
+            for mutant in offspring:
+                if random.random() < mutpb:
+                    toolbox.mutate(mutant)
+                    del mutant.fitness.values
+
+            cohort = offspring.extend(population)
+
+            # Evaluate the individuals with an invalid fitness
+            invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+            fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+            for ind, fit in zip(invalid_ind, fitnesses):
+                ind.fitness.values = fit
+
+            # The population is entirely replaced by the offspring
+            population[:] = offspring
+
+            # Get the new best error score
+            new_best_error = min(tools.selBest(population, 1)[0].fitness.values[0], best_error)
+
+            # If best error has not improved then increment early stopping metric
+            if new_best_error >= best_error:
+                early_stopping_counter -= 1
+            else:
+                early_stopping_counter = early_stopping
+
+
+            # Update the best error 
+            best_error = new_best_error
+
+
+
+            # The counter is updated to indicate a next generation
+            g += 1
+
+
+ 
+        if True:
+            if early_stopping_counter == 0:
+                print(f"Early Stopping after {g} generations")
+            elif best_error <= threshold:
+                print("Threshold Reached")
+        halloffame.update(population)
+        return population, None
+
+
+    def get_worst_individual_from_pop(indivuduals):
+        return tools.selWorst(indivuduals, 1)
+
+
+        
+
+algo_dict = {
         "simple" : algorithms.eaSimple,
         "mu+lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuPlusLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),
-        "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),
-
+        "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),        
+        "custom"    : Algorithms.basic_self
         }
 
-    def get_algorithm(key):
+
+
+def get_algorithm(key):
         """
         Returns the algorithm function associated with the key
         Defaults to eaSimple if key not found
         """
-        if key not in Algorithms.algo_dict.keys():
+        if key not in algo_dict.keys():
             print(f"Key {key} not found out of available algorithm options. Using Simple Algorithm")
             algorithms.ea
-        return Algorithms.algo_dict.get(key, Algorithms.algo_dict.get("simple"))
-
-    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose):
-        """
-
-        """
-        pass
+        return algo_dict.get(key, algo_dict.get("simple"))
 
 
 

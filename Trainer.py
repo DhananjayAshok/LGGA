@@ -70,7 +70,7 @@ class Trainer(object):
             X = df.drop('target', axis=1)
             y = df['target']
         except:
-            traceback.print_exec()
+            traceback.print_exc()
             print(f"Error on equation {equation_id} skipping")
             return '', 0, 0
         if not use_gens:
@@ -79,7 +79,7 @@ class Trainer(object):
             try:
                 hist = learning_system.fit(X[:no_samples], y[:no_samples])
             except:
-                traceback.print_exec()
+                traceback.print_exc()
                 print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")
                 return '', 0, 0
             end = time.time()
@@ -97,7 +97,7 @@ class Trainer(object):
             try:
                 hist = learning_system.fit_gen(gen)
             except:
-                traceback.print_exec()
+                traceback.print_exc()
                 print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")
                 return '', 0, 0
             end = time.time()
