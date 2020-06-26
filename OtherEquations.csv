@@ -1,2 +1,2 @@
 ﻿Filename,nvariables,Formula
-pythogoras,2,sqrt(a**2 + b**2 )
+resistance,2,r = (r1*r2)/(r1+r2)

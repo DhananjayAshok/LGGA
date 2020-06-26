@@ -44,3 +44,29 @@ def get_generator_pythogoras(no_samples=1000, input_range=(0, 500), to_save=Fals
             df.to_csv(os.path.join(save_path, "pythogoras.csv"), index=False)
         return df.drop('target', axis=1), df['target']
     return gen
+
+def get_generator_resistance(no_samples=1000, input_range=(0, 500), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per resistance requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+
+        while len(outputs) < no_samples:
+            r1 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            r2 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            if r1 <= 0 or r2 <= 0 or r1+r2 <=0:
+                continue
+            r = (r1*r2)/(r1+r2)
+            inputs.append([r1, r2])
+            outputs.append(r)
+        r = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1"])
+        df['target'] = r
+        if to_save:
+            df.to_csv(os.path.join(save_path, "resistance.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen

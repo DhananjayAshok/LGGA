@@ -90,6 +90,8 @@ class Trainer(object):
             else:
                 if equation_id == "pythogoras":
                     gen = get_generator_pythogoras(no_samples=no_train_samples, input_range=input_range)
+                elif equation_id == "resistance":
+                    gen = get_generator_resistance(no_samples=no_train_samples, input_range=input_range)
                 else:
                     print(f"Equation {equation_id} does not have a generator")
                     return '', 0, 0

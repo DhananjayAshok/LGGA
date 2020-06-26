@@ -1,0 +1,2 @@
+Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
+resistance,r = (r1*r2)/(r1+r2),"sqrt(add(add(sqrt(exp(sqrt(ARG0))), ARG1), ARG1))","(4411.958425454248, 23684.19969741575)",1297.9592804908752
