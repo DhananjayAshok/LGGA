@@ -65,6 +65,7 @@ class DEAPLearningSystem(LearningSystem):
         self.algorithm = algorithm
         self.func_list = func_list
         self.add_func = lambda dls, x, y : 0 # Zero Function Default
+        self.lgml_func = lambda ind, dls=None, gen=None: (None, None) # Assume all true
         self.creator = creator
 
     def create_fitness(self):
@@ -173,7 +174,41 @@ class DEAPLearningSystem(LearningSystem):
             X, y = gen()
             return self.eval_helper(ind, X, y)
         self.toolbox.register('evaluate', eval, gen=generator)
+        return
 
+
+
+    def extendX(self, addition_dataframe):
+        """
+        Updates X
+        """
+        self.X = pd.concat([self.X, addition_dataframe], ignore_index=True)
+        return
+
+    def extendy(self, additional_series):
+        """
+        Updates y
+        """
+        self.y = pd.concat([self.y, additional_series], ignore_index=True)
+        return
+
+    def initialize_lgml_functions(self, gen):
+        """
+        Create the variables and functions needed for LGML algorithm to operate
+        """
+        X, y = gen()
+        self.X = X
+        self.y = y
+        self.toolbox.register('generate', gen)
+        self.toolbox.register('getX', lambda : self.X)
+        self.toolbox.register('gety', lambda : self.y)
+        self.toolbox.register('extendX', self.extendX)
+        self.toolbox.register('extendy', self.extendy)
+        self.toolbox.register('evaluate', self.eval_helper)
+        self.toolbox.register('get_violation_frame', self.lgml_func, dls=self, gen=gen)
+        self.toolbox.register('compile', gp.compile, pset=self.pset)
+        return
+        
     def get_result(self, func, X, y):
         """
         Returns a series that holds all the values func(X)
@@ -231,6 +266,15 @@ class DEAPLearningSystem(LearningSystem):
         """
         self.add_func = func
 
+    def set_lgml_func(self, func):
+        """
+        Set the LGML style function for use
+        Will only be used if algorithm is  "lgml"
+        func must take in an individual precompiled with pset and return a tuple - DataFrame, Series or None, None
+            must have optional parameters dls and gen
+        """
+        self.lgml_func = func
+
     def set_algorithm(self, algorithm):
         self.algorithm = algorithm
 
@@ -243,6 +287,9 @@ class DEAPLearningSystem(LearningSystem):
             del self.Fitness
             del self.pset
             del self.hof
+            if hasattr(self, "X"):
+                del self.X
+                del self.y
         except:
             print("Already Reset")
         return
@@ -252,6 +299,8 @@ class DEAPLearningSystem(LearningSystem):
         Runs the builder functions in order with data
         """
         arity = self.get_arity_from_X(X)
+        if self.algorithm == "lgml":
+            raise ValueError(f"Trying to use algorithm lgml with a fixed X and y dataset. This is not permitted. To use LGML algorithm please call on model fit with fit_gen and provide a generator.")
         self.invariant_build_model(arity, tournsize)
         self.reg_eval(X, y)
         return
@@ -263,7 +312,11 @@ class DEAPLearningSystem(LearningSystem):
         smallx, smally = generator(no_samples=1)
         arity = self.get_arity_from_X(smallx)
         self.invariant_build_model(arity, tournsize)
-        self.reg_gen_eval(generator)
+        if self.algorithm == "lgml":
+            self.initialize_lgml_functions(generator)
+        else:
+            self.reg_gen_eval(generator)
+        return
 
     def invariant_build_model(self, arity, tournsize):
         self.create_fitness()
@@ -411,8 +464,103 @@ class Algorithms():
         return population, None
 
 
+    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 3.1415):
+        """
+        Implements the following basic ideas - 
+        1. Ensures the selected from the previous population are preserved if they beat the new population
+        2. Implements Early Stopping if the training loss stays constant for a given number of epochs
+        3. Implements target detection which terminates if error is below a certain threshold
+
+        """
+        early_stopping_counter = early_stopping
+        best_error = threshold + 9000
+        g = 0
+        while (g < ngen and early_stopping_counter !=0 and best_error > threshold):
+            
+            # Select the next generation individuals
+            offspring = toolbox.select(population, len(population)//10)
+            # Clone the selected individuals
+            offspring = list(map(toolbox.clone, offspring))
+
+            # Apply crossover on the offspring
+            for child1, child2 in zip(offspring[::2], offspring[1::2]):
+                if random.random() < cxpb:
+                    toolbox.mate(child1, child2)
+                    del child1.fitness.values
+                    del child2.fitness.values
+
+
+            # Apply mutation on the offspring
+            for mutant in offspring:
+                if random.random() < mutpb:
+                    toolbox.mutate(mutant)
+                    del mutant.fitness.values
+
+            cohort = offspring.extend(population)
+
+            # Evaluate the individuals with an invalid fitness
+            invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+            current_X = toolbox.getX()
+            current_y = toolbox.gety()
+            print(current_X.shape)
+            fitnesses = toolbox.map(lambda ind : toolbox.evaluate(ind, current_X, current_y), invalid_ind)
+            for ind, fit in zip(invalid_ind, fitnesses):
+                ind.fitness.values = fit
+
+            # The population is entirely replaced by the offspring
+            population[:] = offspring
+
+            # Get the new best performer
+            new_best = tools.selBest(population, 1)[0]
+            # Get the new best error score
+            new_best_error = min(new_best.fitness.values[0], best_error)
+
+            # If best error has not improved then increment early stopping metric
+            if new_best_error >= best_error:
+                early_stopping_counter -= 1
+            else:
+                early_stopping_counter = early_stopping
+
+
+            # Update the best error 
+            best_error = new_best_error
+
+
+
+            # The counter is updated to indicate a next generation
+            g += 1
+
+            # Get a pandas dataframe that returns a set of all data points where truth is violated
+            violation_frameX, violation_framey = toolbox.get_violation_frame(toolbox.compile(new_best))
+            if violation_frameX is None:
+                pass
+            else:
+                try:
+                    toolbox.extendX(violation_frameX)
+                    toolbox.extendy(violation_framey)
+                except:
+                    traceback.print_exc()
+
+                
+
+
+        if True:
+            if early_stopping_counter == 0:
+                print(f"Early Stopping after {g} generations")
+            elif best_error <= threshold:
+                print("Threshold Reached")
+        halloffame.update(population)
+        return population, None
+    
+
     def get_worst_individual_from_pop(indivuduals):
         return tools.selWorst(indivuduals, 1)
+
+
+
+    def get_worst_individual_from_pop(indivuduals):
+        return tools.selWorst(indivuduals, 1)
+
 
 
         
@@ -421,7 +569,8 @@ algo_dict = {
         "simple" : algorithms.eaSimple,
         "mu+lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuPlusLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),
         "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),        
-        "custom"    : Algorithms.basic_self
+        "custom"    : Algorithms.basic_self,
+        "lgml"      : Algorithms.lgml_algorithm,
         }
 
 
@@ -433,7 +582,7 @@ def get_algorithm(key):
         """
         if key not in algo_dict.keys():
             print(f"Key {key} not found out of available algorithm options. Using Simple Algorithm")
-            algorithms.ea
+            return algorithms.eaSimple
         return algo_dict.get(key, algo_dict.get("simple"))
 
 

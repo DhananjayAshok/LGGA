@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def triangle_rule(dls, X, y, weight=1000):
     func = dls.func
@@ -24,8 +25,7 @@ def semiperimeter_rule(dls, X, y, weight=1000, threshold=2):
     return weight*rviolations
 
 
-def resistance_constraints(dls, X, y, weight=1000, threshold=2):
-    func = dls.func
+def resistance_computations(func, dls, X, y, threshold):
     predr = dls.get_result(func, X, y)
     temp_clone = X.copy()
     temp_clone['X1'] = X['X0']
@@ -34,11 +34,30 @@ def resistance_constraints(dls, X, y, weight=1000, threshold=2):
     r1 = X['X0']
     r2 = X['X1']
     r = y
+    return predr, predsymr, r1, r2, r
+
+def resistance_constraints(dls, X, y, weight=1000, threshold=2):
+    func = dls.func
+    predr, predsymr, r1, r2, r = resistance_computations(func,dls, X, y, threshold)
     symmnetry_violation = np.abs(predr - predsymr)
-    x1specific = r1 - predr
-    x2specific = r2 - predr
+    x1specific = predr - r1
+    x2specific = predr - r2
     rviolations = max(np.append(symmnetry_violation,0)) + max(np.append(x1specific, 0)) + max(np.append(x2specific, 0))
     return weight * rviolations
 
+
+def resistance_lgml_func(ind, dls=None, gen=None, threshold=2):
+    if gen is None:
+        return None, None
+    X, y = gen()
+    predr, predsymr, r1, r2, r = resistance_computations(ind,dls, X, y, threshold)
+    symviolation = np.abs(predr - predsymr) > threshold
+    x1violation = r1 < predr
+    x2violation = r2 < predr
+    overall = (symviolation | x1violation) | (x2violation)
+    if not any(overall):
+        return None, None
+    else:
+        return X[overall], y[overall]
 
 
