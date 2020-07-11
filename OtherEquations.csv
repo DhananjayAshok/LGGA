@@ -1,2 +1,3 @@
 ﻿Filename,nvariables,Formula
-resistance,2,r = (r1*r2)/(r1+r2)
+resistance,2,(r1*r2)/(r1+r2)
+snell,2,sin(i)/sin(r)

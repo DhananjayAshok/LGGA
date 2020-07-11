@@ -92,8 +92,10 @@ class Trainer(object):
                     gen = get_generator_pythogoras(no_samples=no_train_samples, input_range=input_range)
                 elif equation_id == "resistance":
                     gen = get_generator_resistance(no_samples=no_train_samples, input_range=input_range)
+                elif equation_id == "snell":
+                    gen = get_generator_snell(no_samples=no_train_samples, input_range=input_range)
                 else:
-                    print(f"Equation {equation_id} does not have a generator")
+                    print(f"Equation {equation_id} does not have a generator registered in the trainer")
                     return '', 0, 0
             start = time.time()
             try:
@@ -152,7 +154,7 @@ class Trainer(object):
             neqs = eqs
             eqs = read_eqs
         else:
-            teqs = list(set(eqs).union(set(read_eqs)))
+            teqs = list(set(eqs).intersection(set(read_eqs)))
             if len(teqs) == 0:
                 raise ValueError(f"None of the equations provided in the iterable {teqs}")
             else:

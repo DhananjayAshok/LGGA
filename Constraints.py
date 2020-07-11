@@ -1,6 +1,24 @@
 import numpy as np
 import pandas as pd
 
+def pairwise_symnetric_result(func, dls, X, y, col0="X0", col1="X1"):
+    temp_clone = X.copy()
+    temp_clone[col0] = X[col1]
+    temp_clone[col1] = X[col0]
+    predsym = dls.get_result(func, temp_clone, y)
+    return predsym
+
+def get_union_slice(violations, X, y):
+    overall = violations[0]
+    for violation in violations[1:]:
+        overall = (overall | violation)
+    if not any(overall):
+        return None, None
+    else:
+        return X[overall], y[overall]
+
+
+
 def triangle_rule(dls, X, y, weight=1000):
     func = dls.func
     c = dls.get_result(func, X, y)
@@ -27,10 +45,7 @@ def semiperimeter_rule(dls, X, y, weight=1000, threshold=2):
 
 def resistance_computations(func, dls, X, y, threshold):
     predr = dls.get_result(func, X, y)
-    temp_clone = X.copy()
-    temp_clone['X1'] = X['X0']
-    temp_clone['X0'] = X['X1']
-    predsymr = dls.get_result(func, temp_clone, y)
+    predsymr = pairwise_symnetric_result(func, dls, X, y)
     r1 = X['X0']
     r2 = X['X1']
     r = y
@@ -54,10 +69,31 @@ def resistance_lgml_func(ind, dls=None, gen=None, threshold=2):
     symviolation = np.abs(predr - predsymr) > threshold
     x1violation = r1 < predr
     x2violation = r2 < predr
-    overall = (symviolation | x1violation) | (x2violation)
-    if not any(overall):
-        return None, None
-    else:
-        return X[overall], y[overall]
+    return get_union_slice([symviolation, x1violation, x2violation], X, y)
+    
 
+
+def snell_computations(func, dls, X, y, threshold):
+    preds = dls.get_result(func, X, y)
+    predsym = pairwise_symnetric_result(func, dls, X, y)
+    i = X['X0']
+    r = X['X1']
+    n = y
+    return preds, predsym, i, r, n
+
+def snell_constraints(dls, X, y, weight=10, threshold=2):
+    func = dls.func
+    predr, predsym, i, r, n = snell_computations(func, dls, X, y, threshold)
+    nonzeros = np.abs(predsym) >= 0.001
+    symnetry_violation = np.abs(predr - 1/predsym[nonzeros])
+    return weight * max(np.append(symnetry_violation, 0))
+
+def snell_lgml_function(ind, dls=None, gen=None, threshold=2):
+    if gen is None:
+        return None, None
+    X, y = gen()
+    predr, predsym, i, r, n = snell_computations(func, dls, X, y, threshold)
+    nonzeros = np.abs(predsym) >= 0.001
+    symnetry_violation = np.abs(predr - 1/predsym[nonzeros]) > threshold
+    return get_union_slice([sysymnetry_violation], X, y)
 

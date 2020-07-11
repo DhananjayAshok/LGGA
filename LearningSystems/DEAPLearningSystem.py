@@ -502,7 +502,6 @@ class Algorithms():
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
             current_X = toolbox.getX()
             current_y = toolbox.gety()
-            print(current_X.shape)
             fitnesses = toolbox.map(lambda ind : toolbox.evaluate(ind, current_X, current_y), invalid_ind)
             for ind, fit in zip(invalid_ind, fitnesses):
                 ind.fitness.values = fit
@@ -550,6 +549,9 @@ class Algorithms():
             elif best_error <= threshold:
                 print("Threshold Reached")
         halloffame.update(population)
+
+        print(f"Finished with {len(current_y)} Data Points")
+
         return population, None
     
 

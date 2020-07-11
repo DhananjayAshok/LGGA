@@ -70,3 +70,30 @@ def get_generator_resistance(no_samples=1000, input_range=(0, 500), to_save=Fals
             df.to_csv(os.path.join(save_path, "resistance.csv"), index=False)
         return df.drop('target', axis=1), df['target']
     return gen
+
+def get_generator_snell(no_samples=1000, input_range=(0, 1.5708), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per resistance requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+            i = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            r = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            if -0.0001 <= np.sin(i) <= 0.0001 or -0.0001 <= np.sin(r) <= 0.0001:
+                continue
+            n = np.sin(i)/np.sin(r)
+            inputs.append([i, r])
+            outputs.append(n)
+            index+=1
+        n = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1"])
+        df['target'] = n
+        if to_save:
+            df.to_csv(os.path.join(save_path, "snell.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
