@@ -94,6 +94,10 @@ class Trainer(object):
                     gen = get_generator_resistance(no_samples=no_train_samples, input_range=input_range)
                 elif equation_id == "snell":
                     gen = get_generator_snell(no_samples=no_train_samples, input_range=input_range)
+                elif equation_id == "coloumb":
+                    gen = get_generator_coloumb(no_samples=no_train_samples, input_range=input_range)
+                elif equation_id == "reflection":
+                    gen = get_generator_reflection(no_samples=no_train_samples, input_range=input_range)
                 else:
                     print(f"Equation {equation_id} does not have a generator registered in the trainer")
                     return '', 0, 0

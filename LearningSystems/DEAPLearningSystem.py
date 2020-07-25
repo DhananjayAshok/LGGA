@@ -392,7 +392,7 @@ class Algorithms():
     lambda_ = 8
 
 
-    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 3.1415):
+    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 0.000000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
@@ -464,7 +464,7 @@ class Algorithms():
         return population, None
 
 
-    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 3.1415):
+    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 0.0000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population

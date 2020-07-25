@@ -1,3 +1,12 @@
+"""
+Process to add another equation:
+1. Add generator
+2. Run generator to produce X and y for testing
+2. Add it to the Trainer predict_individual_equations if section
+3. Add constraints
+4. Add the equation to OtherEquations.csv
+"""
+
 import pandas as pd
 import numpy as np
 import os
@@ -73,7 +82,7 @@ def get_generator_resistance(no_samples=1000, input_range=(0, 500), to_save=Fals
 
 def get_generator_snell(no_samples=1000, input_range=(0, 1.5708), to_save=False, save_path="data//"):
     """
-    Returns a function gen such that calls to gen return X, y as per resistance requirements with saving optional
+    Returns a function gen such that calls to gen return X, y as per snell requirements with saving optional
 
     gen will take in an optional parameter no_samples
     """
@@ -97,3 +106,63 @@ def get_generator_snell(no_samples=1000, input_range=(0, 1.5708), to_save=False,
             df.to_csv(os.path.join(save_path, "snell.csv"), index=False)
         return df.drop('target', axis=1), df['target']
     return gen
+
+def get_generator_coloumb(no_samples=1000, input_range=(-100, 100), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per coloumb requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+
+            q1 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            q2 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            r = np.random.default_rng().uniform(input_range[0] , input_range[1]**0.5)            
+            if r <= 0.0001:
+                continue
+            q = q1*q2/(r**2)
+            inputs.append([q1, q2, r])
+            outputs.append(q)
+            index+=1
+        q = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1", "X2"])
+        df['target'] = q
+        if to_save:
+            df.to_csv(os.path.join(save_path, "coloumb.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
+
+
+def get_generator_reflection(no_samples=1000, input_range=(0, 100), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per reflection requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+            n1 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            n2 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            if n1+n2 <= 0.0001:
+                continue
+            r = np.abs((n1-n2)/(n1+n2))**2
+            inputs.append([n1,n2])
+            outputs.append(r)
+            index+=1
+        r = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1"])
+        df['target'] = r
+        if to_save:
+            df.to_csv(os.path.join(save_path, "reflection.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
+
+# Coloumbs Law - Symnetry, sign of result is +ve iff both charges same sign, 
+# Normal Reflection Coefficient - Symnetry , between 0 and 1 
