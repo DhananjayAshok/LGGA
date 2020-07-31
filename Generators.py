@@ -225,6 +225,30 @@ def get_generator_distance(no_samples=1000, input_range=(-100, 100), to_save=Fal
         return df.drop('target', axis=1), df['target']
     return gen
 
+def get_generator_normal(no_samples=1000, input_range=(-2, 2), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per normal requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+            x = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            n = np.exp(-((x)**2)/2)/(2*np.pi)
+            inputs.append([x])
+            outputs.append(n)
+            index += 1
+        n = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0"])
+        df['target'] = n
+        if to_save:
+            df.to_csv(os.path.join(save_path, "normal.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
+
 
 generator_dict = {
     "pythogoras": get_generator_pythogoras,
@@ -233,5 +257,6 @@ generator_dict = {
     "coloumb": get_generator_coloumb,
     "reflection": get_generator_reflection,
     "gas": get_generator_gas,
-    "distance": get_generator_distance
+    "distance": get_generator_distance,
+    "normal": get_generator_normal
     }

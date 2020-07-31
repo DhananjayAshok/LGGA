@@ -253,3 +253,38 @@ def distance_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
     equality_violation = pred_eq > threshold
     violations = symnetry_violations+value_violations+[equality_violation]
     return get_union_slice(violations, X, y)
+
+
+def normal_computations(func, dls, X, y, threshold):
+    x = X['X0']
+    n = y
+    pred = dls.get_result(func, X, y)
+    temp_x = X.copy()
+    temp_x['X0'] = -x
+    predneg = dls.get_result(func, temp_x, y)
+    predzero = zero_result(func, dls, X, y, cols=["X0"])
+    max_pred = max(pred)
+    return x, n, pred, predneg, predzero, max_pred
+
+def normal_constraints(dls, X, y, weight=10, threshold=0.0001):
+    func = dls.func
+    x, n, pred, predneg, predzero, max_pred = normal_computations(func,dls, X,y, threshold)
+    negviolation = np.abs(pred - predzero)
+    zero_violation = np.abs(predzero - 0.1591549)
+    max_violation = max_pred - predzero
+    min_violation = -pred
+    return weight * (get_floored_max(negviolation) + get_floored_max(zero_violation) + get_floored_max(max_violation) + get_floored_max(min_violation))
+
+
+def normal_lgml_func(ind, dls, X, y, threshold=0.00001):
+    if gen is None:
+        return None, None
+    X, y = gen()
+    x, n, pred, predneg, predzero, max_pred = normal_computations(func,dls, X,y, threshold)
+    negviolation = np.abs(pred - predzero) > threshold
+    zero_violation = np.abs(predzero - 0.1591549) > threshold
+    max_violation = max_pred - predzero > threshold
+    min_violation = -pred > threshold
+    return get_union_slice([negviolation, zero_violation, max_violation,  min_violation], X, y)
+
+
