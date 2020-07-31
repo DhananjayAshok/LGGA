@@ -95,6 +95,8 @@ class DEAPLearningSystem(LearningSystem):
         self.pset = gp.PrimitiveSet("MAIN", arity=problem_arity)
         for func in self.func_list:
             self.pset.addPrimitive(func_dict[func], len(signature(func_dict[func]).parameters), name=func)
+        self.pset.addTerminal(2)
+        self.pset.addTerminal(np.pi)
 
         self.creator.create("Individual", gp.PrimitiveTree, fitness=self.Fitness,
                        pset=self.pset)

@@ -116,6 +116,9 @@ def add(x, y):
     #print(type(x))
     return operator.add(x, y)
 
+def neg(x):
+    return -x
+
 
 
 
@@ -139,5 +142,6 @@ func_dict = {
     "max" : max,
     "min" : min,
     "sqrt": sqrt,
-    "square": square
+    "square": square,
+    "neg": neg
     }
