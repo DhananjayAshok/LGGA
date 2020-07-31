@@ -2,15 +2,19 @@
 Process to add another equation:
 1. Add generator
 2. Run generator to produce X and y for testing
-2. Add it to the Trainer predict_individual_equations if section
-3. Add constraints
-4. Add the equation to OtherEquations.csv
+3. Add generator to generator_dict
+4. Add constraints
+5. Add the equation to OtherEquations.csv
 """
 
 import pandas as pd
 import numpy as np
 import os
 from DataExtraction import create_dataset
+
+
+
+
 
 
 def get_generator_generic(equation_id, no_samples=1000, input_range=(-100, 100), noise_range=(0,0), master_file="FeynmanEquations.csv"):
@@ -164,5 +168,70 @@ def get_generator_reflection(no_samples=1000, input_range=(0, 100), to_save=Fals
         return df.drop('target', axis=1), df['target']
     return gen
 
-# Coloumbs Law - Symnetry, sign of result is +ve iff both charges same sign, 
-# Normal Reflection Coefficient - Symnetry , between 0 and 1 
+def get_generator_gas(no_samples=1000, input_range=(0, 100), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per gas constant requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+            p = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            v = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            n = np.random.default_rng().uniform(input_range[0]+0.0001 ,np.sqrt(input_range[1]))
+            t = np.random.default_rng().uniform(input_range[0]+0.0001 ,np.sqrt(input_range[1]))
+            if t*n <= 0.0001:
+                continue
+            r = (p*v)/(n*t)
+            inputs.append([p, v, n, t])
+            outputs.append(r)
+            index+=1
+        r = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1", "X2", "X3"])
+        df['target'] = r
+        if to_save:
+            df.to_csv(os.path.join(save_path, "gas.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
+
+def get_generator_distance(no_samples=1000, input_range=(-100, 100), to_save=False, save_path="data//"):
+    """
+    Returns a function gen such that calls to gen return X, y as per distance requirements with saving optional
+
+    gen will take in an optional parameter no_samples
+    """
+    def gen(no_samples=no_samples):
+        inputs = []
+        outputs = []
+        index = 0
+        while index < no_samples:
+            x0 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            x1 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            y0 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            y1 = np.random.default_rng().uniform(input_range[0] ,input_range[1])
+            
+            d = np.sqrt((x1-x0)**2 + (y1-y0)**2)
+            inputs.append([x0, x1, y0, y1])
+            outputs.append(d)
+            index+=1
+        d = np.array(outputs)
+        df = pd.DataFrame(inputs, columns=["X0", "X1", "X2", "X3"])
+        df['target'] = d
+        if to_save:
+            df.to_csv(os.path.join(save_path, "distance.csv"), index=False)
+        return df.drop('target', axis=1), df['target']
+    return gen
+
+
+generator_dict = {
+    "pythogoras": get_generator_pythogoras,
+    "resistance": get_generator_resistance,
+    "snell": get_generator_snell,
+    "coloumb": get_generator_coloumb,
+    "reflection": get_generator_reflection,
+    "gas": get_generator_gas,
+    "distance": get_generator_distance
+    }

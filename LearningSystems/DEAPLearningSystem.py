@@ -392,12 +392,14 @@ class Algorithms():
     lambda_ = 8
 
 
-    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 0.000000001):
+    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=10, threshold = 0.000000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
         2. Implements Early Stopping if the training loss stays constant for a given number of epochs
         3. Implements target detection which terminates if error is below a certain threshold
+
+        population_ratio should be a multiple of 2 greater than 2 and the algorithm works best when the population is exactly divisible by the ratio
 
         """
         early_stopping_counter = early_stopping
@@ -406,9 +408,10 @@ class Algorithms():
         while (g < ngen and early_stopping_counter !=0 and best_error > threshold):
             
             # Select the next generation individuals
-            offspring = toolbox.select(population, len(population)//10)
+            selected = toolbox.select(population, len(population)//population_ratio)
+            #print(f"Starting Loop on gen {g} population length is {len(population)} and selected length is {len(selected)}")
             # Clone the selected individuals
-            offspring = list(map(toolbox.clone, offspring))
+            offspring = list(map(toolbox.clone, selected))
 
             # Apply crossover on the offspring
             for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -424,8 +427,6 @@ class Algorithms():
                     toolbox.mutate(mutant)
                     del mutant.fitness.values
 
-            cohort = offspring.extend(population)
-
             # Evaluate the individuals with an invalid fitness
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
             fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
@@ -433,7 +434,11 @@ class Algorithms():
                 ind.fitness.values = fit
 
             # The population is entirely replaced by the offspring
-            population[:] = offspring
+            scaling = population_ratio // 2
+            cohort = offspring + selected*scaling
+            new_pop = toolbox.population(max(len(population) - len(cohort), 0))
+            population[:] = cohort + new_pop
+            #print(f"On Gen {g}: Population: {len(population)}\n Offspring: {len(offspring)}\n Selected: {len(selected)} New_pop: {len(new_pop)}\n\n\n\n\n")
 
             # Get the new best error score
             new_best_error = min(tools.selBest(population, 1)[0].fitness.values[0], best_error)
@@ -464,7 +469,7 @@ class Algorithms():
         return population, None
 
 
-    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, early_stopping=10, threshold = 0.0000001):
+    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=10, threshold = 0.0000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
@@ -478,9 +483,9 @@ class Algorithms():
         while (g < ngen and early_stopping_counter !=0 and best_error > threshold):
             
             # Select the next generation individuals
-            offspring = toolbox.select(population, len(population)//10)
+            selected = toolbox.select(population, len(population)//10)
             # Clone the selected individuals
-            offspring = list(map(toolbox.clone, offspring))
+            offspring = list(map(toolbox.clone, selected))
 
             # Apply crossover on the offspring
             for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -496,7 +501,6 @@ class Algorithms():
                     toolbox.mutate(mutant)
                     del mutant.fitness.values
 
-            cohort = offspring.extend(population)
 
             # Evaluate the individuals with an invalid fitness
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
@@ -507,7 +511,10 @@ class Algorithms():
                 ind.fitness.values = fit
 
             # The population is entirely replaced by the offspring
-            population[:] = offspring
+            scaling = population_ratio//2
+            cohort = scaling*selected + offspring
+            new_pop = toolbox.select((len(population)-len(cohort)))
+            population[:] = cohort + new_pop
 
             # Get the new best performer
             new_best = tools.selBest(population, 1)[0]

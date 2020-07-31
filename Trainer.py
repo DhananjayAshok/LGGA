@@ -88,19 +88,10 @@ class Trainer(object):
             if equation_id in equation_dict.keys():
                 gen = get_generator_generic(equation_id, no_samples=no_train_samples, input_range=input_range, noise_range=noise_range, master_file=master_file)
             else:
-                if equation_id == "pythogoras":
-                    gen = get_generator_pythogoras(no_samples=no_train_samples, input_range=input_range)
-                elif equation_id == "resistance":
-                    gen = get_generator_resistance(no_samples=no_train_samples, input_range=input_range)
-                elif equation_id == "snell":
-                    gen = get_generator_snell(no_samples=no_train_samples, input_range=input_range)
-                elif equation_id == "coloumb":
-                    gen = get_generator_coloumb(no_samples=no_train_samples, input_range=input_range)
-                elif equation_id == "reflection":
-                    gen = get_generator_reflection(no_samples=no_train_samples, input_range=input_range)
-                else:
-                    print(f"Equation {equation_id} does not have a generator registered in the trainer")
+                if equation_id not in generator_dict.keys():
+                    print(f"Equation {equation_id} does not have a generator registered in generator_dict. Please register the equation to run with use_gens parameter. Current generator_dict keys : \n{generator_dict.keys()}")
                     return '', 0, 0
+                gen = generator_dict.get(equation_id)(no_samples=no_train_samples, input_range=input_range)
             start = time.time()
             try:
                 hist = learning_system.fit_gen(gen)

@@ -8,8 +8,22 @@ def pairwise_symnetric_result(func, dls, X, y, col0="X0", col1="X1"):
     predsym = dls.get_result(func, temp_clone, y)
     return predsym
 
-def get_floored_max(series):
-    return max(np.append(series, 0))
+def zero_result(func, dls, X, y, cols=["X0"]):
+    temp_clone = X.copy()
+    for col in cols:
+        temp_clone[col] = 0
+    return dls.get_result(func, temp_clone, y)
+
+def equality_result(func, dls, X, y, cols=["X0", "X1"]):
+    temp_clone = X.copy()
+    for col in cols[1:]:
+        temp_clone[col] = X[cols[0]]
+    predeq = dls.get_result(func, temp_clone, y)
+    return predeq
+
+
+def get_floored_max(series, floor=0):
+    return max(np.append(series, floor))
 
 def get_union_slice(violations, X, y):
     overall = violations[0]
@@ -20,7 +34,10 @@ def get_union_slice(violations, X, y):
     else:
         return X[overall], y[overall]
 
-
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Constraints and LGML functions declared Below
+    
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 def triangle_rule(dls, X, y, weight=1000):
     func = dls.func
@@ -154,3 +171,85 @@ def reflection_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
     symnetry_violation = np.abs(predr - predsym) > threshold
     range_violation = np.abs(predr - 0.5) > 0.5
     return get_union_slice([symnetry_violation, range_violation], X, y)
+
+
+def gas_computations(func, dls, X, y, threshold):
+    p = X['X0']
+    v = X['X1']
+    n = X['X2']
+    t = X['X3']
+    r = y
+    pred = dls.get_result(func, X, y)
+    predsympv = pairwise_symnetric_result(func, dls, X, y)
+    predsymnt = pairwise_symnetric_result(func, dls, X, y, col0="X2", col1="X3")
+    predzerop = zero_result(func, dls, X, y)
+    predzerov = zero_result(func, dls, X, y, cols=["X1"])
+
+    return p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov
+
+def gas_constraints(dls, X, y, weight=10, threshold=0.00001):
+    func = dls.func
+    p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov = gas_computations(func, dls, X, y, threshold)
+    symnetry_frames = [predsympv, predsymnt]
+    symnetry_violations = [np.abs(pred - predsym) for predsym in symnetry_frames]
+    zero_frames = [predzerop, predzerov]
+    zero_violations = [zero_frame - 0.001 for zero_frame in zero_frames]
+    return weight * (sum([get_floored_max(violation) for violation in symnetry_violations]) + sum([get_floored_max(violation) for violation in zero_violations]))
+
+def gas_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
+    if gen is None:
+        return None, None
+    X, y = gen()
+    p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov = gas_computations(func, dls, X, y, threshold)
+    symnetry_frames = [predsympv, predsymnt]
+    zero_frames = [predzerop, predzerov]
+    symnetry_violations = [np.abs(pred - predsym) > threshold for predsym in symnetry_frames]
+    zero_violations = [np.abs(frame) > threshold for frame in zero_frames]
+    return get_union_slice(symnetry_violations.extend(zero_violations), X, y)
+
+
+def distance_computations(func, dls, X, y, threshold):
+    x0 = X['X0']
+    x1 = X['X1']
+    y0 = X['X2']
+    y1 = X['X3']
+    d = y
+    pred = dls.get_result(func, X, y)
+    pred_symx = pairwise_symnetric_result(func, dls, X, y)
+    pred_symy = pairwise_symnetric_result(func, dls, X, y, col0="X2", col1="X3")
+    pred_zero_x0 = zero_result(func, dls, X, y, cols=["X1", "X2", "X3"])
+    pred_zero_x1 = zero_result(func, dls, X, y, cols=["X0", "X2", "X3"])
+    pred_zero_y0 = zero_result(func, dls, X, y, cols=["X0", "X1", "X3"])
+    pred_zero_y1 = zero_result(func, dls, X, y, cols=["X0", "X1", "X2"])
+    pred_eq = equality_result(func, dls, X, y, cols=["X0", "X1", "X2", "X3"])
+    return x0, x1, y0, y1, d, pred, pred_symx, pred_symy, pred_zero_x0, pred_zero_x1, pred_zero_y0, pred_zero_y1, pred_eq
+
+
+def distance_constraints(dls, X, y, weight=10, threshold=0.00001):
+    func = dls.func
+    x0, x1, y0, y1, d, pred, pred_symx, pred_symy, pred_zero_x0, pred_zero_x1, pred_zero_y0, pred_zero_y1, pred_eq = distance_computations(func, dls, X, y, threshold)
+    symnetry_frames = [pred_symx, pred_symy]
+    symnetry_violations = [np.abs(pred - predsym) for predsym in symnetry_frames]
+    x0_violation = np.abs(x0 - pred_zero_x0)
+    x1_violation = np.abs(x1 - pred_zero_x1)
+    y0_violation = np.abs(y0 - pred_zero_y0)
+    y1_violation = np.abs(y1 - pred_zero_y1)
+    value_violations = [x0_violation, x1_violation, y0_violation, y1_violation]
+    equality_violation = pred_eq - threshold
+    return weight * (sum([get_floored_max(violation) for violation in symnetry_violations]) + sum([get_floored_max(violation) for violation in value_violations]) + get_floored_max(equality_violation))
+
+def distance_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
+    if gen is None:
+        return None, None
+    X, y = gen()
+    x0, x1, y0, y1, d, pred, pred_symx, pred_symy, pred_zero_x0, pred_zero_x1, pred_zero_y0, pred_zero_y1, pred_eq = distance_computations(func, dls, X, y, threshold)
+    symnetry_frames = [pred_symx, pred_symy]
+    symnetry_violations = [np.abs(pred - predsym) > threshold for predsym in symnetry_frames]
+    x0_violation = np.abs(x0 - pred_zero_x0) > threshold
+    x1_violation = np.abs(x1 - pred_zero_x1) > threshold
+    y0_violation = np.abs(y0 - pred_zero_y0) > threshold
+    y1_violation = np.abs(y1 - pred_zero_y1) > threshold
+    value_violations = [x0_violation, x1_violation, y0_violation, y1_violation]
+    equality_violation = pred_eq > threshold
+    violations = symnetry_violations+value_violations+[equality_violation]
+    return get_union_slice(violations, X, y)

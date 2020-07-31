@@ -3,3 +3,5 @@ resistance,2,(r1*r2)/(r1+r2)
 snell,2,sin(i)/sin(r)
 coloumb,3,q1q2/r^2
 reflection,2,|(n1-n2)/(n1+n2)|^2
+gas,4,PV/nT
+distance,4,sqrt((x1-x0)^2+(y1-y0)^2)

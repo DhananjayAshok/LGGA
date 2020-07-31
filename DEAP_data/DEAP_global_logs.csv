@@ -1,2 +1,2 @@
 Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-snell,(r1*r2)/(r1+r2),"sub(div(ARG0, ARG0), div(ARG0, ARG0))","(86.09485510344624, nan)",13.550423622131348
+distance,(r1*r2)/(r1+r2),"div(div(ARG0, sqrt(add(ARG1, ARG3))), sub(ARG1, ARG1))","(13525.801571724016, 199853.9172223046)",622.9310126304626
