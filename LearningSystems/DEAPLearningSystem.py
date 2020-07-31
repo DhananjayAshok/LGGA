@@ -151,6 +151,23 @@ class DEAPLearningSystem(LearningSystem):
         a = self.add_func(self, X, y) 
         return (mse + a,)
 
+    def mse_helper(self, ind, X, y):
+        """
+        Given an X and a y returns the mse of a given ind
+        """
+        self.func = gp.compile(ind, self.pset)
+        mse = self._mse(self.func, X, y)
+        return (mse, )
+
+    def add_func_helper(self, ind, X, y):
+        """
+        Given an X and a y returns the mse of a given ind
+        """
+        self.func = gp.compile(ind, self.pset)
+        a = self._add_func(self.func, X, y)
+        return (a, )
+
+
     def reg_eval(self, X, y):
         """
         registered the evaluation method we wanna use in this function
@@ -178,6 +195,39 @@ class DEAPLearningSystem(LearningSystem):
         self.toolbox.register('evaluate', eval, gen=generator)
         return
 
+    def reg_mse(self, X, y):
+        """
+        registered the mse evaluation under toolbox.mse
+        """
+        self.toolbox.register('mse', self.mse_helper, X=X, y=y)
+        return
+
+    def reg_add_func(self, X, y):
+        """
+        registered the add_func evaluation under toolbox.addfunc
+        """
+        self.toolbox.register('addfunc', self.add_func_helper, X=X, y=y)
+        return
+
+    def reg_gen_mse(self, generator):
+        """
+        Registered the mse function using a generator
+        """
+        def eval(ind, gen):
+            X, y = gen()
+            return self.mse_helper(ind, X, y)
+        self.toolbox.register('mse', eval, gen=generator)
+        return
+
+    def reg_gen_add_func(self, generator):
+        """
+        Registered the addfunc function using a generator
+        """
+        def eval(ind, gen):
+            X, y = gen()
+            return self.add_func_helper(ind, X, y)
+        self.toolbox.register('addfunc', eval, gen=generator)
+        return
 
 
     def extendX(self, addition_dataframe):
@@ -305,6 +355,9 @@ class DEAPLearningSystem(LearningSystem):
             raise ValueError(f"Trying to use algorithm lgml with a fixed X and y dataset. This is not permitted. To use LGML algorithm please call on model fit with fit_gen and provide a generator.")
         self.invariant_build_model(arity, tournsize)
         self.reg_eval(X, y)
+        if self.algorithm == "earlyswitching":
+            self.reg_mse(X, y)
+            self.reg_add_func(X, y)
         return
 
     def build_gen_model(self, generator, tournsize=15):
@@ -318,6 +371,10 @@ class DEAPLearningSystem(LearningSystem):
             self.initialize_lgml_functions(generator)
         else:
             self.reg_gen_eval(generator)
+            if self.algorithm == "earlyswitching":
+                self.reg_gen_mse(generator)
+                self.reg_gen_add_func(generator)
+
         return
 
     def invariant_build_model(self, arity, tournsize):
@@ -435,10 +492,15 @@ class Algorithms():
             for ind, fit in zip(invalid_ind, fitnesses):
                 ind.fitness.values = fit
 
-            # The population is entirely replaced by the offspring
+            # Create a new population and evaluate their fitnesses
             scaling = population_ratio // 2
             cohort = offspring + selected*scaling
             new_pop = toolbox.population(max(len(population) - len(cohort), 0))
+            fitnesses = toolbox.map(toolbox.evaluate, new_pop)
+            for ind, fit in zip(new_pop, fitnesses):
+                ind.fitness.values = fit
+
+            # The population is then re-created            
             population[:] = cohort + new_pop
             #print(f"On Gen {g}: Population: {len(population)}\n Offspring: {len(offspring)}\n Selected: {len(selected)} New_pop: {len(new_pop)}\n\n\n\n\n")
 
@@ -512,10 +574,16 @@ class Algorithms():
             for ind, fit in zip(invalid_ind, fitnesses):
                 ind.fitness.values = fit
 
+            # Evaluate new pop
+            scaling = population_ratio // 2
+            cohort = offspring + selected*scaling
+            new_pop = toolbox.population(max(len(population) - len(cohort), 0))
+            fitnesses = toolbox.map(toolbox.evaluate, new_pop)
+            for ind, fit in zip(new_pop, fitnesses):
+                ind.fitness.values = fit
+
             # The population is entirely replaced by the offspring
-            scaling = population_ratio//2
-            cohort = scaling*selected + offspring
-            new_pop = toolbox.select((len(population)-len(cohort)))
+            
             population[:] = cohort + new_pop
 
             # Get the new best performer
@@ -572,6 +640,99 @@ class Algorithms():
     def get_worst_individual_from_pop(indivuduals):
         return tools.selWorst(indivuduals, 1)
 
+    def early_switcher(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=4, threshold = 0.000000001):
+        """
+        Implements the following basic ideas - 
+        1. Ensures the selected from the previous population are preserved if they beat the new population
+        2. Implements Early Stopping if the training loss stays constant for a given number of epochs
+        3. Implements target detection which terminates if error is below a certain threshold
+
+        population_ratio should be a multiple of 2 greater than 2 and the algorithm works best when the population is exactly divisible by the ratio
+
+        """
+        base_early_stoppings = [early_stopping, 1]
+        early_stopping_counters = [early_stopping, base_early_stoppings[1]]
+        g = 0
+        best_errors = [threshold+9000, threshold+9000]
+        current_evals = [toolbox.mse, toolbox.addfunc]
+        current_eval = 0
+        switched = False
+        terminate = False
+        while ((g < ngen and best_errors[0] > threshold) or (current_eval==1 and not terminate)):
+            # We never want to end on a truth cycle: so if g >= ngen then we do one more mse sweep across the population and end it
+            if g >= ngen:
+                terminate = True
+                current_eval = 0
+            
+            # Select the next generation individuals
+            selected = toolbox.select(population, len(population)//population_ratio)
+            #print(f"Starting Loop on gen {g} population length is {len(population)} and selected length is {len(selected)}")
+            # Clone the selected individuals
+            offspring = list(map(toolbox.clone, selected))
+
+            # Apply crossover on the offspring
+            for child1, child2 in zip(offspring[::2], offspring[1::2]):
+                if random.random() < cxpb:
+                    toolbox.mate(child1, child2)
+                    del child1.fitness.values
+                    del child2.fitness.values
+
+
+            # Apply mutation on the offspring
+            for mutant in offspring:
+                if random.random() < mutpb:
+                    toolbox.mutate(mutant)
+                    del mutant.fitness.values
+
+            # Evaluate the individuals with an invalid fitness
+            if not switched:
+                invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+            else:
+                invalid_ind = offspring
+            fitnesses = toolbox.map(current_evals[current_eval], invalid_ind)
+            for ind, fit in zip(invalid_ind, fitnesses):
+                ind.fitness.values = fit
+
+            # Evaluate new pop
+            scaling = population_ratio // 2
+            cohort = offspring + selected*scaling
+            new_pop = toolbox.population(max(len(population) - len(cohort), 0))
+            fitnesses = toolbox.map(current_evals[current_eval], new_pop)
+            for ind, fit in zip(new_pop, fitnesses):
+                ind.fitness.values = fit
+            # The population is entirely replaced by the offspring
+            
+            population[:] = cohort + new_pop
+            #print(f"On Gen {g}: Population: {len(population)}\n Offspring: {len(offspring)}\n Selected: {len(selected)} New_pop: {len(new_pop)}\n\n\n\n\n")
+
+            # Get the new best error score
+            new_best_error = min(tools.selBest(population, 1)[0].fitness.values[0], best_errors[current_eval])
+
+            # If best error has not improved then increment early stopping metric
+            if new_best_error >= best_errors[current_eval]:
+                early_stopping_counters[current_eval] -= 1
+            else:
+                early_stopping_counters[current_eval] = base_early_stoppings[current_eval]
+
+            # Update the best error 
+            best_errors[current_eval] = new_best_error
+
+            # The counter is updated to indicate a next generation
+            g += 1
+
+            if early_stopping_counters[current_eval] == 0:
+                early_stopping_counters[current_eval] = base_early_stoppings[current_eval]
+                current_eval = (current_eval+1)%2
+                switched = True
+            else:
+                switched = False
+
+        if True:
+            if best_errors[0] <= threshold:
+                print("Threshold Reached")
+        halloffame.update(population)
+        return population, None
+
 
 
         
@@ -582,6 +743,7 @@ algo_dict = {
         "mu,lambda" : lambda population, toolbox, cxpb, mutpb, ngen,  halloffame, verbose : algorithms.eaMuCommaLambda(population=population, toolbox=toolbox, mu=Algorithms.mu, lambda_=Algorithms.lambda_, cxpb=cxpb, mutpb=mutpb, ngen=ngen, halloffame=halloffame, verbose=verbose),        
         "custom"    : Algorithms.basic_self,
         "lgml"      : Algorithms.lgml_algorithm,
+        "earlyswitcher": Algorithms.earlyswitcher
         }
 
 
