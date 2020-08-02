@@ -200,7 +200,7 @@ def gas_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
     if gen is None:
         return None, None
     X, y = gen()
-    p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov = gas_computations(func, dls, X, y, threshold)
+    p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov = gas_computations(ind, dls, X, y, threshold)
     symnetry_frames = [predsympv, predsymnt]
     zero_frames = [predzerop, predzerov]
     symnetry_violations = [np.abs(pred - predsym) > threshold for predsym in symnetry_frames]
@@ -242,7 +242,7 @@ def distance_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
     if gen is None:
         return None, None
     X, y = gen()
-    x0, x1, y0, y1, d, pred, pred_symx, pred_symy, pred_zero_x0, pred_zero_x1, pred_zero_y0, pred_zero_y1, pred_eq = distance_computations(func, dls, X, y, threshold)
+    x0, x1, y0, y1, d, pred, pred_symx, pred_symy, pred_zero_x0, pred_zero_x1, pred_zero_y0, pred_zero_y1, pred_eq = distance_computations(ind, dls, X, y, threshold)
     symnetry_frames = [pred_symx, pred_symy]
     symnetry_violations = [np.abs(pred - predsym) > threshold for predsym in symnetry_frames]
     x0_violation = np.abs(x0 - pred_zero_x0) > threshold
@@ -280,7 +280,7 @@ def normal_lgml_func(ind, dls, X, y, threshold=0.00001):
     if gen is None:
         return None, None
     X, y = gen()
-    x, n, pred, predneg, predzero, max_pred = normal_computations(func,dls, X,y, threshold)
+    x, n, pred, predneg, predzero, max_pred = normal_computations(ind,dls, X,y, threshold)
     negviolation = np.abs(pred - predzero) > threshold
     zero_violation = np.abs(predzero - 0.1591549) > threshold
     max_violation = max_pred - predzero > threshold

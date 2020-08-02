@@ -95,8 +95,8 @@ class DEAPLearningSystem(LearningSystem):
         self.pset = gp.PrimitiveSet("MAIN", arity=problem_arity)
         for func in self.func_list:
             self.pset.addPrimitive(func_dict[func], len(signature(func_dict[func]).parameters), name=func)
-        self.pset.addTerminal(2)
-        self.pset.addTerminal(np.pi)
+        #self.pset.addTerminal(2)
+        #self.pset.addTerminal(np.pi)
 
         self.creator.create("Individual", gp.PrimitiveTree, fitness=self.Fitness,
                        pset=self.pset)
@@ -451,7 +451,7 @@ class Algorithms():
     lambda_ = 8
 
 
-    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=10, threshold = 0.000000001):
+    def basic_self(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=5, early_stopping=10, threshold = 0.000000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
@@ -532,7 +532,7 @@ class Algorithms():
         halloffame.update(population)
         return population, None
 
-    def early_switcher(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=4, threshold = 0.000000001):
+    def early_switcher(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=5, early_stopping=4, threshold = 0.000000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
@@ -627,7 +627,7 @@ class Algorithms():
         return population, None
 
 
-    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=10, early_stopping=10, threshold = 0.0000001):
+    def lgml_algorithm(population, toolbox, cxpb, mutpb, ngen, halloffame, verbose, population_ratio=5, early_stopping=10, threshold = 0.0000001):
         """
         Implements the following basic ideas - 
         1. Ensures the selected from the previous population are preserved if they beat the new population
@@ -641,7 +641,7 @@ class Algorithms():
         while (g < ngen and early_stopping_counter !=0 and best_error > threshold):
             
             # Select the next generation individuals
-            selected = toolbox.select(population, len(population)//10)
+            selected = toolbox.select(population, len(population)//population_ratio)
             # Clone the selected individuals
             offspring = list(map(toolbox.clone, selected))
 
@@ -672,7 +672,7 @@ class Algorithms():
             scaling = population_ratio // 2
             cohort = offspring + selected*scaling
             new_pop = toolbox.population(max(len(population) - len(cohort), 0))
-            fitnesses = toolbox.map(toolbox.evaluate, new_pop)
+            fitnesses = toolbox.map(lambda ind : toolbox.evaluate(ind, current_X, current_y), new_pop)
             for ind, fit in zip(new_pop, fitnesses):
                 ind.fitness.values = fit
 
@@ -720,8 +720,11 @@ class Algorithms():
             elif best_error <= threshold:
                 print("Threshold Reached")
         halloffame.update(population)
-
+        
         print(f"Finished with {len(current_y)} Data Points")
+        if True:
+            toolbox.getX().to_csv('LGMLX.csv')
+            toolbox.gety().to_csv('LGMLY.csv')
 
         return population, None
     

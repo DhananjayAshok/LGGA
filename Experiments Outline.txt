@@ -1,0 +1,19 @@
+Define func_set for each
+WeightTest for each -> Find Ideal Weight
+LGML with starting 100 data points for each x15 -> Find resulting avg data points
+Baselines x15 for each -> Make sure quantities are same for average
+EarlySwitcher x15 for each -> Make sure quantities are same for average
+--------------------------------------------------------------------------
+Func set defenitions:
+--------------------------------------------------------------------------
+Resistance -> add, sub, mul, div
+Snell -> add, sub, mul, div, sin
+Coloumb -> add, sub, mul, div
+Reflection -> add, sub, mul, div, abs, square
+gas -> add, sub, mul, div
+distance -> add, sub, mul, div, square, sqrt
+normal -> add, sub, mul, div, neg, square, 2*pi
+---------------------------------------------------------------------------
+Best Weights:
+Resistance -> 0.25
+Snell -> 0.25
