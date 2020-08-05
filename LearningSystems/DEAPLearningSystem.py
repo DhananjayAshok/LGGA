@@ -95,8 +95,7 @@ class DEAPLearningSystem(LearningSystem):
         self.pset = gp.PrimitiveSet("MAIN", arity=problem_arity)
         for func in self.func_list:
             self.pset.addPrimitive(func_dict[func], len(signature(func_dict[func]).parameters), name=func)
-        #self.pset.addTerminal(2)
-        #self.pset.addTerminal(np.pi)
+        #self.pset.addTerminal(2*np.pi)
 
         self.creator.create("Individual", gp.PrimitiveTree, fitness=self.Fitness,
                        pset=self.pset)
@@ -722,7 +721,7 @@ class Algorithms():
         halloffame.update(population)
         
         print(f"Finished with {len(current_y)} Data Points")
-        if True:
+        if False:
             toolbox.getX().to_csv('LGMLX.csv')
             toolbox.gety().to_csv('LGMLY.csv')
 

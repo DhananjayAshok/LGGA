@@ -14,6 +14,19 @@ gas -> add, sub, mul, div
 distance -> add, sub, mul, div, square, sqrt
 normal -> add, sub, mul, div, neg, square, 2*pi
 ---------------------------------------------------------------------------
-Best Weights:
-Resistance -> 0.25
-Snell -> 0.25
+Best Weights: In CSV OtherEquations.csv
+---------------------------------------------------------------------------
+LGMLs left:
+-------------------------------------------------------------------------
+Snell
+Reflection
+Gas
+Distance
+Normal
+-----------------------------------------------------------------------------
+
+
+Apologising motions,
+	opt
+
+realising they rhetoric, 

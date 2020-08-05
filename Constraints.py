@@ -205,7 +205,7 @@ def gas_lgml_func(ind, dls=None, gen=None, threshold=0.00001):
     zero_frames = [predzerop, predzerov]
     symnetry_violations = [np.abs(pred - predsym) > threshold for predsym in symnetry_frames]
     zero_violations = [np.abs(frame) > threshold for frame in zero_frames]
-    return get_union_slice(symnetry_violations.extend(zero_violations), X, y)
+    return get_union_slice(symnetry_violations+zero_violations, X, y)
 
 
 def distance_computations(func, dls, X, y, threshold):
