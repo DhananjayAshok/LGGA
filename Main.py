@@ -15,7 +15,7 @@ func_dict = {"snell": snell_func_set,"coloumb":basic_func_set, "reflection":refl
 weight_dict = {"snell":0.25, "coloumb":9_000,"reflection":1.2,"gas":1_00_000, "distance":10}
 constraints_dict = {"snell":snell_constraints, "coloumb":coloumb_constraints, "reflection":reflection_constraints, "gas":gas_constraints, "distance":distance_constraints}
 lgml_dict = {"snell":snell_lgml_func, "coloumb":coloumb_lgml_func, "reflection":reflection_lgml_func, "gas":gas_lgml_func, "distance":distance_lgml_func}
-size_dict = {"snell":150, "coloumb":1_200,"reflection":1_500,"gas":1_00_000, "distance":10}
+size_dict = {"snell":150, "coloumb":1_200,"reflection":1_500,"gas":250, "distance":1600}
 
 
 def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=15):
@@ -73,11 +73,11 @@ def equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_
 
 
 
-for eq in ['distance', "gas"]:
+for eq in []:
     print(f"\n\nNow Starting LGML for Equation {eq}\n\n")
     equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict)
     print(f"\n Finished LGML Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
-for eq in []:
+for eq in ['gas', 'distance']:
     equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict)
 
