@@ -78,6 +78,6 @@ for eq in []:
     equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict)
     print(f"\n Finished LGML Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
-for eq in ['gas', 'distance']:
+for eq in ['distance']:
     equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict)
 
