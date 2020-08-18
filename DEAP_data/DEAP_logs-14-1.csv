@@ -1,2 +1,0 @@
-Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-gas,(r1*r2)/(r1+r2),"div(ARG0, ARG0)","(359372075.6648073, 0.0)",1317.031408071518

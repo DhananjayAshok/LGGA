@@ -1,3 +1,0 @@
-Equation_ID,Real Equation,Predicted Equation,Error,Time Taken
-snell,(r1*r2)/(r1+r2),"sub(ARG1, ARG0)","(90.25765292563015, 0.0)",27.848929166793823
-resistance,sin(i)/sin(r),inv(ARG0),"(14344.988116963386, 0.0)",26.060041427612305
