@@ -1,10 +1,5 @@
-# [PointCleanNet](http://www.lix.polytechnique.fr/Labo/Marie-Julie.RAKOTOSAONA/pointcleannet.html)
+# [Logic Guided Genetic Algorithms for Symbolic Regression]()
 This is our implementation of the Logic Guided Genetic Algorithm, a genetic algorithm for Symbolic Regression that combines logical constraints with the genetic programming life cycle to help avoid local minima and perform effective data set augmentation.
-
-
-![PointCleanNet cleans point clouds](https://raw.githubusercontent.com/mrakotosaon/pointcleannet/master/images/teaser.png "PointCleanNet")
-
-The architecture is similar to [PCPNet](http://geometry.cs.ucl.ac.uk/projects/2018/pcpnet/) (with a few smaller modifications).
 
 This code was written by [Dhananjay Ashok](https://www.linkedin.com/in/dhananjay-ashok-576342142/), who is also the lead author on the working paper on the same topic.
 
