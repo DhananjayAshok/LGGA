@@ -18,7 +18,7 @@ lgml_dict = {"resistance": resistance_lgml_func, "snell":snell_lgml_func, "colou
 size_dict = {"resistance": 700, "snell":150, "coloumb":1_200,"reflection":1_500,"gas":250, "distance":1600}
 
 
-def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=15):
+def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=10):
     func_set = func_dict[eq]
     tweight = weight_dict[eq]
     constraints_func = constraints_dict[eq]
@@ -45,7 +45,7 @@ def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict
         final_df.to_csv(f"{eq}LGML{i}.csv", index=False)
 
 
-def equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict, nruns=15):
+def equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict, nruns=10):
     func_set = func_dict[eq]
     tweight = weight_dict[eq]
     constraints_func = constraints_dict[eq]
@@ -71,7 +71,7 @@ def equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_
         final_df.set_index("Weight")
         final_df.to_csv(f"{eq}Baseline{i}.csv", index=False)
 
-def equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict, size_dict, nruns=15):
+def equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict, size_dict, nruns=10):
     func_set = func_dict[eq]
     tweight = weight_dict[eq]
     constraints_func = constraints_dict[eq]
@@ -99,9 +99,9 @@ def equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict
 
 
 
-for eq in ['coloumb']:
+for eq in ['reflection']:
     print(f"\n\nNow Starting LGML for Equation {eq}\n\n")
-    equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=15)
+    equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=10)
     print(f"\n Finished LGML Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
 for eq in []:

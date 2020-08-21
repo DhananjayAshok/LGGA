@@ -203,7 +203,7 @@ def gas_constraints(dls, X, y, weight=10, threshold=0.00001):
 
 def gas_lgml_func(ind, dls=None, X=None, y=None, threshold=0.001):
     X_sympv, X_symnt,X_zerop, X_zerov , p, v, n, t, r, pred, predsympv, predsymnt, predzerop, predzerov = gas_computations(ind, dls, X, y, threshold)
-    symnetry_frames = [(X_sympv, predsympv), (Xsymnt, predsymnt)]
+    symnetry_frames = [(X_sympv, predsympv), (X_symnt, predsymnt)]
     zero_frames = [(X_zerop, predzerop), (X_zerov, predzerov)]
     symnetry_violations = [(np.abs(pred - sym[1]) > threshold, sym[0], y) for sym in symnetry_frames]
     zero_violations = [(np.abs(frames[1]) > threshold, frames[0], pd.Series(np.zeros(shape=frames[1].shape))) for frames in zero_frames]
