@@ -99,15 +99,15 @@ def equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict
 
 
 
-for eq in []:
+for eq in ['resistance']:
     print(f"\n\nNow Starting LGML for Equation {eq}\n\n")
-    equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict)
+    equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=15)
     print(f"\n Finished LGML Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
 
 for eq in []:
     equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict)
 
-for eq in eqs:
+for eq in []:
     print(f"\n\nNow Starting Early Switching for Equation {eq}\n\n")
     equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict, size_dict)
     print(f"\n Finished ES Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")

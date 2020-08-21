@@ -6,20 +6,20 @@ def pairwise_symnetric_result(func, dls, X, y, col0="X0", col1="X1"):
     temp_clone[col0] = X[col1]
     temp_clone[col1] = X[col0]
     predsym = dls.get_result(func, temp_clone, y)
-    return predsym
+    return temp_clone, predsym
 
 def zero_result(func, dls, X, y, cols=["X0"]):
     temp_clone = X.copy()
     for col in cols:
         temp_clone[col] = 0
-    return dls.get_result(func, temp_clone, y)
+    return temp_clone, dls.get_result(func, temp_clone, y)
 
 def equality_result(func, dls, X, y, cols=["X0", "X1"]):
     temp_clone = X.copy()
     for col in cols[1:]:
         temp_clone[col] = X[cols[0]]
     predeq = dls.get_result(func, temp_clone, y)
-    return predeq
+    return temp_clone, predeq
 
 
 def get_floored_max(series, floor=0):
@@ -34,62 +34,56 @@ def get_union_slice(violations, X, y):
     else:
         return X[overall], y[overall]
 
+
+def get_union_slice(violations):
+    """
+    Expects violation to be [(boolean frame, X, y)....]
+    """
+    Xs = pd.concat([violation[1][violation[0]] for violation in violations])
+    ys = pd.concat([violation[2][violation[0]] for violation in violations])
+    print(f"Adding {len(ys)} points")
+    return Xs, ys
+    
+
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Constraints and LGML functions declared Below
     
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-def triangle_rule(dls, X, y, weight=1000):
-    func = dls.func
-    c = dls.get_result(func, X, y)
-    a = X['X0']
-    b = X['X1']
-    diff = c - b - a
-    #flags = a + b < c
-    #nviolations = np.mean(flags)*100
-    #return weight*nviolations
-    return max(np.append(diff, 0))*weight
-
-
-def semiperimeter_rule(dls, X, y, weight=1000, threshold=2):
-    func = dls.func
-    predc = dls.get_result(func, X, y)
-    a = X['X0']
-    b = X['X1']
-    c = y
-    s = (a + b + c)/2
-    flags = np.abs((s-a)*(s-b) - s*(s-predc)) > threshold 
-    rviolations = np.mean(flags)*100
-    return weight*rviolations
-
-
 def resistance_computations(func, dls, X, y, threshold):
     predr = dls.get_result(func, X, y)
-    predsymr = pairwise_symnetric_result(func, dls, X, y)
+    Xsym, predsymr = pairwise_symnetric_result(func, dls, X, y)
+    X0_zero, predr1zero = zero_result(func, dls, X, y, cols=["X0"])
+    X1_zero, predr2zero = zero_result(func, dls, X, y, cols=["X1"])
+    X_eq, predeq = equality_result(func, dls, X, y, cols=["X0", "X1"])
     r1 = X['X0']
     r2 = X['X1']
     r = y
-    return predr, predsymr, r1, r2, r
+    return Xsym, X0_zero, X1_zero, X_eq, predr, predsymr, predr1zero, predr2zero, predeq, r1, r2, r
 
 def resistance_constraints(dls, X, y, weight=1000, threshold=2):
     func = dls.func
-    predr, predsymr, r1, r2, r = resistance_computations(func,dls, X, y, threshold)
+    Xsym, X0_zero, X1_zero, X_eq, predr, predsymr, predr1zero, predr2zero, predeq, r1, r2, r = resistance_computations(func,dls, X, y, threshold)
     symmnetry_violation = np.abs(predr - predsymr)
     x1specific = predr - r1
     x2specific = predr - r2
+    
     rviolations = max(np.append(symmnetry_violation,0)) + max(np.append(x1specific, 0)) + max(np.append(x2specific, 0))
     return weight * rviolations
 
 
-def resistance_lgml_func(ind, dls=None, gen=None, threshold=2):
-    if gen is None:
+def resistance_lgml_func(ind, X=None, y=None, dls=None, threshold=2):
+    if X is None or y is None:
         return None, None
-    X, y = gen()
-    predr, predsymr, r1, r2, r = resistance_computations(ind,dls, X, y, threshold)
+    Xsym, X0_zero, X1_zero, X_eq, predr, predsymr, predr1zero, predr2zero, predeq, r1, r2, r = resistance_computations(ind, dls, X, y, threshold)
     symviolation = np.abs(predr - predsymr) > threshold
     x1violation = r1 < predr
     x2violation = r2 < predr
-    return get_union_slice([symviolation, x1violation, x2violation], X, y)
+    r1zeroviolation = np.abs(predr1zero) > threshold
+    r2zeroviolation = np.abs(predr2zero) > threshold
+    equality_violation = np.abs(r1/2 - predeq) > threshold # Equality result function makes all equal to first input column
+    zero_col = pd.Series(np.zeros(shape=predr.shape))
+    return get_union_slice([(symviolation, Xsym, y), (x1violation, X, y), (x2violation, X, y), (r1zeroviolation, X0_zero, zero_col), (r1zeroviolation, X1_zero, zero_col), (equality_violation, X_eq, r1/2)])
     
 
 

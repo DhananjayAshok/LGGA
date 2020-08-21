@@ -256,7 +256,7 @@ class DEAPLearningSystem(LearningSystem):
         self.toolbox.register('extendX', self.extendX)
         self.toolbox.register('extendy', self.extendy)
         self.toolbox.register('evaluate', self.eval_helper)
-        self.toolbox.register('get_violation_frame', self.lgml_func, dls=self, gen=gen)
+        self.toolbox.register('get_violation_frame', self.lgml_func, dls=self, X=self.X, y=self.y)
         self.toolbox.register('compile', gp.compile, pset=self.pset)
         return
         
@@ -701,12 +701,14 @@ class Algorithms():
 
             # Get a pandas dataframe that returns a set of all data points where truth is violated
             violation_frameX, violation_framey = toolbox.get_violation_frame(toolbox.compile(new_best))
+            #print(f"Recieved Violation frame with size {len(violation_framey)}")
             if violation_frameX is None:
                 pass
             else:
                 try:
                     toolbox.extendX(violation_frameX)
                     toolbox.extendy(violation_framey)
+                    #print(f"After extention the size of data is {len(toolbox.gety())}")
                 except:
                     traceback.print_exc()
 
@@ -721,9 +723,10 @@ class Algorithms():
         halloffame.update(population)
         
         print(f"Finished with {len(current_y)} Data Points")
-        if False:
-            toolbox.getX().to_csv('LGMLX.csv')
-            toolbox.gety().to_csv('LGMLY.csv')
+        if True:
+            df = toolbox.getX()
+            df['target'] = toolbox.gety()
+            df.to_csv('LGGADATASET.csv', index=False)
 
         return population, None
     
