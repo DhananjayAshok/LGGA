@@ -10,7 +10,7 @@ snell_func_set = basic_func_set + ["sin"]
 reflection_func_set = basic_func_set + ["abs", "square"]
 distance_func_set = basic_func_set + ["square", "sqrt"]
 
-eqs = ["resistance", "snell", "coloumb", "reflection"]
+eqs = [ "coloumb", "reflection", "gas"]
 func_dict = {"resistance": basic_func_set, "snell": snell_func_set,"coloumb":basic_func_set, "reflection":reflection_func_set, "gas":basic_func_set, "distance":distance_func_set}
 weight_dict = {"resistance": 0.25, "snell":0.25, "coloumb":9_000,"reflection":1.2,"gas":1_00_000, "distance":10}
 constraints_dict = {"resistance": resistance_constraints, "snell":snell_constraints, "coloumb":coloumb_constraints, "reflection":reflection_constraints, "gas":gas_constraints, "distance":distance_constraints}
@@ -107,7 +107,7 @@ for eq in []:
 for eq in []:
     equation_report_baseline(eq, func_dict, weight_dict, constraints_dict, size_dict)
 
-for eq in ["snell"]:
+for eq in eqs:
     print(f"\n\nNow Starting Early Switching for Equation {eq}\n\n")
     equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict, size_dict)
     print(f"\n Finished ES Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
