@@ -243,14 +243,19 @@ class DEAPLearningSystem(LearningSystem):
         self.y = pd.concat([self.y, additional_series], ignore_index=True)
         return
 
-    def initialize_lgml_functions(self, gen):
+    
+    def initialize_lgml_functions_gen(self, gen):
+        X, y = gen()
+        self.initialize_lgml_functions(X, y)
+        return
+
+
+    def initialize_lgml_functions(self, X, y):
         """
         Create the variables and functions needed for LGML algorithm to operate
         """
-        X, y = gen()
         self.X = X
         self.y = y
-        self.toolbox.register('generate', gen)
         self.toolbox.register('getX', lambda : self.X)
         self.toolbox.register('gety', lambda : self.y)
         self.toolbox.register('extendX', self.extendX)
@@ -351,7 +356,7 @@ class DEAPLearningSystem(LearningSystem):
         """
         arity = self.get_arity_from_X(X)
         if self.algorithm == "lgml":
-            raise ValueError(f"Trying to use algorithm lgml with a fixed X and y dataset. This is not permitted. To use LGML algorithm please call on model fit with fit_gen and provide a generator.")
+            self.initialize_lgml_functions(X, y)
         self.invariant_build_model(arity, tournsize)
         self.reg_eval(X, y)
         if self.algorithm == "earlyswitcher":
@@ -367,7 +372,7 @@ class DEAPLearningSystem(LearningSystem):
         arity = self.get_arity_from_X(smallx)
         self.invariant_build_model(arity, tournsize)
         if self.algorithm == "lgml":
-            self.initialize_lgml_functions(generator)
+            self.initialize_lgml_functions_gen(generator)
         else:
             self.reg_gen_eval(generator)
             if self.algorithm == "earlyswitcher":

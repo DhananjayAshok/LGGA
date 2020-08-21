@@ -99,7 +99,7 @@ def equation_report_early_switching(eq, func_dict, weight_dict, constraints_dict
 
 
 
-for eq in ['resistance']:
+for eq in ['snell']:
     print(f"\n\nNow Starting LGML for Equation {eq}\n\n")
     equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict, nruns=15)
     print(f"\n Finished LGML Run for Equation {eq}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n")
