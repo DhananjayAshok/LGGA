@@ -5,6 +5,7 @@ import pandas as pd
 from Constraints import *
 
 equation_list = ["resistance", "snell", "coloumb", "reflection", "gas", "distance", "normal"]
+feynman_equations = ["I.11.19", "I.12.11", "I.13.12", "I.18.4", "I.18.14","I.34.1", "I.39.11","I.44.4", "I.47.23", "II.34.11"]
 basic_func_set = ["add", "mul", "sub", "div"]
 snell_func_set = basic_func_set + ["sin"]
 reflection_func_set = basic_func_set + ["abs", "square"]
