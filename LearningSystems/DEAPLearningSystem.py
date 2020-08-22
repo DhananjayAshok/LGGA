@@ -355,13 +355,14 @@ class DEAPLearningSystem(LearningSystem):
         Runs the builder functions in order with data
         """
         arity = self.get_arity_from_X(X)
+        self.invariant_build_model(arity, tournsize)
         if self.algorithm == "lgml":
             self.initialize_lgml_functions(X, y)
-        self.invariant_build_model(arity, tournsize)
-        self.reg_eval(X, y)
-        if self.algorithm == "earlyswitcher":
-            self.reg_mse(X, y)
-            self.reg_add_func(X, y)
+        else:
+            self.reg_eval(X, y)
+            if self.algorithm == "earlyswitcher":
+                self.reg_mse(X, y)
+                self.reg_add_func(X, y)
         return
 
     def build_gen_model(self, generator, tournsize=15):

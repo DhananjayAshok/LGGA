@@ -112,7 +112,7 @@ def I134(inputs):
 
 
 def I1312(inputs):
-    G = 6.67259 * 10**(-11)
+    G = 1#6.67259 * 10**(-11)
     m1 = get_column(inputs, 0)
     m2 = get_column(inputs, 1)
     r2 = get_column(inputs, 3)

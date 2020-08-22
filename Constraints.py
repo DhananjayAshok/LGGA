@@ -89,10 +89,18 @@ def get_union_slice(violations):
     """
     Expects violation to be [(boolean frame, X, y)....]
     """
-    Xs = pd.concat([violation[1][violation[0]] for violation in violations])
-    ys = pd.concat([violation[2][violation[0]] for violation in violations])
+    baseX = violations[0][1]
+    basey = pd.Series(violations[2][2])
+    for violation in violations[1:]:
+        index = violation[0]
+        X = violation[1]
+        y = violation[2]
+        Xslice = X[index]
+        yslice = y[index]
+        pd.concat([baseX, Xslice], ignore_index = True)
+        pd.concat([basey, pd.Series(yslice)], ignore_index=True)
     #print(f"Adding {len(ys)} points")
-    return Xs, ys
+    return baseX, basey
 
     
 
@@ -356,7 +364,7 @@ def I1119_constraints(dls, X, y, weight=5, threshold=000.1):
 
 def I1119_lgml_func(ind, dls, X=None, y=None, threshold=0.001):
     zs, zl, X_eq, predeq, eq_actual = I1119_computations(ind, dls, X, y, threshold)
-    return get_union_slice(zl + [np.abs(predeq-eq_actual) > threshold, X_eq, eq_actual])
+    return get_union_slice(zl + [(np.abs(predeq-eq_actual) > threshold, X_eq, eq_actual)])
 
 
 
@@ -381,8 +389,8 @@ def I1211_lgml_func(ind, dls, X, y, threshold=0.001):
 I.13.12
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 def I1312_computations(func, dls, X, y, threshold):
-    zs, zl = zeros_final(func, dls, X, y, threshold, combinations = [["X0"], ["X1", "X2", "X3"]])
-    ss, sl = symmetric_final(func, dls, X, y, threshold, vars=["X1", "X2", "X3"])
+    zs, zl = zeros_final(func, dls, X, y, threshold, combinations = [["X0"], ["X1"]])
+    ss, sl = symmetric_final(func, dls, X, y, threshold, vars=["X0", "X1"])
     return zs + ss, zl + sl
 
 def I1312_constraints(dls, X, y, weight=5, threshold=0.001):
@@ -396,7 +404,7 @@ def I1312_lgml_func(ind, dls, X, y, threshold=0.001):
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 I.18.4
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-def I1814_computations(func, dls, X, y, threshold):
+def I184_computations(func, dls, X, y, threshold):
     zs, zl = zeros_final(func, dls, X, y, threshold, combinations = [["X0", "X1"], ["X2", "X3"]])
     X_m1_zer, pred_zer_m1 = zero_result(func, dls, X, y, cols=["X0"])
     X_m2_zer, pred_zer_m2 = zero_result(func, dls, X, y, cols=["X1"])
@@ -408,12 +416,12 @@ def I1814_computations(func, dls, X, y, threshold):
     m2_list = [m2error > threshold, X_m2_zer, actual_m2]
     return zs + get_floored_max(m1error) + get_floored_max(m2error), zl + m1_list + m2_list
 
-def I1814_constraints(dls, X, y, weight=5, threshold=0.001):
-    s, discard = I1814_computations(dls.func, dls, X, y, threshold)
+def I184_constraints(dls, X, y, weight=5, threshold=0.001):
+    s, discard = I184_computations(dls.func, dls, X, y, threshold)
     return weight * s
 
-def I1814_lgml_func(ind, dls, X, y, threshold=0.001):
-    discard, l = I1814_computations(dls.func, dls, X, y, threshold)
+def I184_lgml_func(ind, dls, X, y, threshold=0.001):
+    discard, l = I184_computations(dls.func, dls, X, y, threshold)
     return get_union_slice(l)
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 I.18.14
