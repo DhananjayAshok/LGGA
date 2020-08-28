@@ -90,7 +90,7 @@ def get_union_slice(violations):
     Expects violation to be [(boolean frame, X, y)....]
     """
     baseX = violations[0][1]
-    basey = pd.Series(violations[2][2])
+    basey = pd.Series(violations[0][2])
     for violation in violations[1:]:
         index = violation[0]
         X = violation[1]
@@ -412,8 +412,8 @@ def I184_computations(func, dls, X, y, threshold):
     actual_m2 = X["X2"]
     m1error = np.abs(pred_zer_m1 - actual_m1)
     m2error = np.abs(pred_zer_m2 - actual_m2)
-    m1_list = [m1error > threshold, X_m1_zer, actual_m1]
-    m2_list = [m2error > threshold, X_m2_zer, actual_m2]
+    m1_list = [(m1error > threshold, X_m1_zer, actual_m1)]
+    m2_list = [(m2error > threshold, X_m2_zer, actual_m2)]
     return zs + get_floored_max(m1error) + get_floored_max(m2error), zl + m1_list + m2_list
 
 def I184_constraints(dls, X, y, weight=5, threshold=0.001):
@@ -479,7 +479,7 @@ def I4723_computations(func, dls, X, y, threshold):
     X_one, predone = equality_result(func, dls, X, y, cols=["X0", "X1", "X2"], value=1)
     actual = pd.Series(np.ones(shape=predone.shape))
     violation_amnt = get_floored_max(np.abs(predone - actual))
-    violation_list = (np.abs(predone - actual) > threshold, X_one, actual)
+    violation_list = [(np.abs(predone - actual) > threshold, X_one, actual)]
     return s + violation_amnt , l + violation_list
 
 def I4723_constraints(dls, X, y, weight=5, threshold=0.001):
