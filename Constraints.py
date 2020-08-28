@@ -91,14 +91,17 @@ def get_union_slice(violations):
     """
     baseX = violations[0][1]
     basey = pd.Series(violations[0][2])
+    spread_violations = [sum(viol[0]) for viol in violations]
+    print(f"Violations per constraint are {spread_violations}")
     for violation in violations[1:]:
         index = violation[0]
         X = violation[1]
         y = violation[2]
         Xslice = X[index]
         yslice = y[index]
-        pd.concat([baseX, Xslice], ignore_index = True)
-        pd.concat([basey, pd.Series(yslice)], ignore_index=True)
+        baseX = pd.concat([baseX, Xslice], ignore_index = True)
+        basey = pd.concat([basey, pd.Series(yslice)], ignore_index=True)
+
     #print(f"Adding {len(ys)} points")
     return baseX, basey
 
@@ -364,7 +367,8 @@ def I1119_constraints(dls, X, y, weight=5, threshold=000.1):
 
 def I1119_lgml_func(ind, dls, X=None, y=None, threshold=0.001):
     zs, zl, X_eq, predeq, eq_actual = I1119_computations(ind, dls, X, y, threshold)
-    return get_union_slice(zl + [(np.abs(predeq-eq_actual) > threshold, X_eq, eq_actual)])
+    eq_vl = (np.abs(predeq-eq_actual) > threshold)
+    return get_union_slice(zl + [(eq_vl, X_eq, eq_actual)])
 
 
 

@@ -1,4 +1,3 @@
-from LearningSystems.GPLearnSystem import GPLearnSystem
 from LearningSystems.DEAPLearningSystem import DEAPLearningSystem
 from Trainer import Trainer
 import pandas as pd
@@ -27,7 +26,7 @@ def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict
     lgml_func = lgml_dict[eq]
 
     trainer = Trainer(path="data//", save=True, load=True, master_file="FeynmanEquations.csv")
-    dl = DEAPLearningSystem(func_list=func_set, ngens=15, algorithm="lgml", population_size=50)
+    dl = DEAPLearningSystem(func_list=func_set, ngens=4, algorithm="lgml", population_size=50)
     weightlist = [tweight for i in range(nruns)]
     no_examples = 1
     for i in range(no_examples):
