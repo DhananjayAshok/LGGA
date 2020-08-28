@@ -4,7 +4,8 @@ import pandas as pd
 from Constraints import *
 
 equation_list = ["resistance", "snell", "coloumb", "reflection", "gas", "distance", "normal"]
-feynman_equations = ["I.11.19", "I.12.11", "I.13.12", "I.18.4", "I.18.14","I.34.1", "I.39.11","I.44.4", "I.47.23", "II.34.11"]
+problem_equations = ["I.44.4", "I.47.23"]
+feynman_equations = ["I.11.19", "I.12.11", "I.13.12", "I.18.4", "I.18.14", "I.34.1", "I.39.11", "II.34.11"] + problem_equations
 basic_func_set = ["add", "mul", "sub", "div"]
 snell_func_set = basic_func_set + ["sin"]
 reflection_func_set = basic_func_set + ["abs", "square"]
@@ -14,8 +15,8 @@ I444_func_set = basic_func_set + ['log']
 eqs = [ "coloumb", "reflection", "gas"]
 func_dict = {"resistance": basic_func_set, "snell": snell_func_set,"coloumb":basic_func_set, "reflection":reflection_func_set, "gas":basic_func_set, "distance":distance_func_set, "I.11.19":['add', 'mul'], "I.12.11":basic_func_set, "I.13.12":basic_func_set, "I.18.4":basic_func_set, "I.18.14":snell_func_set,"I.34.1":basic_func_set, "I.39.11":basic_func_set,"I.44.4":I444_func_set, "I.47.23":basic_func_set, "II.34.11":basic_func_set}
 weight_dict = {"resistance": 0.25, "snell":0.25, "coloumb":9_000,"reflection":1.2,"gas":1_00_000, "distance":10, "I.11.19":500, "I.12.11":10_000, "I.13.12":20, "I.18.4":0.25, "I.18.14":10,"I.34.1":0.25, "I.39.11":0.25,"I.44.4":0.25, "I.47.23":0.25, "II.34.11":0.25}
-constraints_dict = {"resistance": resistance_constraints, "snell":snell_constraints, "coloumb":coloumb_constraints, "reflection":reflection_constraints, "gas":gas_constraints, "distance":distance_constraints, "I.11.19":I1119_constraints, "I.12.11":I1211_constraints, "I.13.12":I1312_constraints, "I.18.4":I184_constraints, "I.18.14":I1814_constraints,"I.34.1":I1814_constraints, "I.39.11":I3911_constraints,"I.44.4":I444_constraints, "I.47.23":I4723_constraints, "II.34.11":II3411_constraints}
-lgml_dict = {"resistance": resistance_lgml_func, "snell":snell_lgml_func, "coloumb":coloumb_lgml_func, "reflection":reflection_lgml_func, "gas":gas_lgml_func, "distance":distance_lgml_func, "I.11.19":I1119_lgml_func, "I.12.11":I1211_lgml_func, "I.13.12":I1312_lgml_func, "I.18.4":I184_lgml_func, "I.18.14":I1814_lgml_func,"I.34.1":I1814_lgml_func, "I.39.11":I3911_lgml_func,"I.44.4":I444_lgml_func, "I.47.23":I4723_lgml_func, "II.34.11":II3411_lgml_func}
+constraints_dict = {"resistance": resistance_constraints, "snell":snell_constraints, "coloumb":coloumb_constraints, "reflection":reflection_constraints, "gas":gas_constraints, "distance":distance_constraints, "I.11.19":I1119_constraints, "I.12.11":I1211_constraints, "I.13.12":I1312_constraints, "I.18.4":I184_constraints, "I.18.14":I1814_constraints,"I.34.1":I341_constraints, "I.39.11":I3911_constraints,"I.44.4":I444_constraints, "I.47.23":I4723_constraints, "II.34.11":II3411_constraints}
+lgml_dict = {"resistance": resistance_lgml_func, "snell":snell_lgml_func, "coloumb":coloumb_lgml_func, "reflection":reflection_lgml_func, "gas":gas_lgml_func, "distance":distance_lgml_func, "I.11.19":I1119_lgml_func, "I.12.11":I1211_lgml_func, "I.13.12":I1312_lgml_func, "I.18.4":I184_lgml_func, "I.18.14":I1814_lgml_func,"I.34.1":I341_lgml_func, "I.39.11":I3911_lgml_func,"I.44.4":I444_lgml_func, "I.47.23":I4723_lgml_func, "II.34.11":II3411_lgml_func}
 size_dict = {"resistance": 700, "snell":150, "coloumb":1_200,"reflection":1_500,"gas":250, "distance":1600, "I.11.19":500, "I.12.11":500, "I.13.12":500, "I.18.4":500, "I.18.14":500,"I.34.1":500, "I.39.11":500,"I.44.4":500, "I.47.23":500, "II.34.11":500}
 
 
@@ -25,7 +26,7 @@ def equation_report_lgml(eq, func_dict, weight_dict, constraints_dict, lgml_dict
     constraints_func = constraints_dict[eq]
     lgml_func = lgml_dict[eq]
 
-    trainer = Trainer(path="data//", save=True, load=True, master_file="FeynmanEquations.csv")
+    trainer = Trainer(path="data//", save=True, load=False, master_file="FeynmanEquations.csv")
     dl = DEAPLearningSystem(func_list=func_set, ngens=4, algorithm="lgml", population_size=50)
     weightlist = [tweight for i in range(nruns)]
     no_examples = 1

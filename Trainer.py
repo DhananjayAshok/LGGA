@@ -77,7 +77,7 @@ class Trainer(object):
             no_samples = min(no_train_samples, len(y))
             start = time.time()
             try:
-                hist = learning_system.fit(X[:no_samples], y[:no_samples])
+                hist = learning_system.fit(X[:no_samples], y[:no_samples], equation_id=equation_id)
             except:
                 traceback.print_exc()
                 print(f"Error Fitting Learning System {learning_system} on equation {equation_id}")

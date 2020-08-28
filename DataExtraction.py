@@ -47,16 +47,13 @@ def create_dataset(equation_id, no_samples=1000, input_range=(-100, 100), path=N
     if load:
         if path is None:
             print("Please Provide Save path for saving and loading")
-        elif equation_id + ".csv" in os.listdir(path):
-            
+        elif equation_id + ".csv" in os.listdir(path):    
             df = pd.read_csv(os.path.join(path, equation_id+".csv"))
             if len(df) < no_samples:
                 print(f"DataFrame has only {len(df)} samples. Training with a reduced number of samples")
             return df.loc[0:no_samples, :]
-
-    else:
-        print("CSV file not found in save_path, generating new dataset")
-
+        else:
+            print("CSV file not found in save_path, generating new dataset")
     directory = pd.read_csv(master_file)
     for i, filename in enumerate(directory['Filename']):
         if filename != equation_id:

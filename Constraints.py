@@ -445,7 +445,17 @@ def I1814_lgml_func(ind, dls, X, y, threshold=0.001):
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 I.34.1
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+def I341_computations(func, dls, X, y, threshold):
+    s, l = zeros_final(func, dls, X, y, threshold, combinations = [["X0"]])
+    return s , l
 
+def I341_constraints(dls, X, y, weight=5, threshold=0.001):
+    s, discard = I341_computations(dls.func, dls, X, y, threshold)
+    return weight * s
+
+def I341_lgml_func(ind, dls, X, y, threshold=0.001):
+    discard, l = I341_computations(dls.func, dls, X, y, threshold)
+    return get_union_slice(l)
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 I.39.11

@@ -12,6 +12,7 @@
 data/
 Experiment Records/
 DEAP_data/
+Datasets/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

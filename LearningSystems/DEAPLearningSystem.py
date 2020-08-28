@@ -307,6 +307,10 @@ class DEAPLearningSystem(LearningSystem):
 
     def get_arity_from_X(self, X):
         return len(X.columns)
+
+    def reg_name(self, equation_id):
+        self.toolbox.register('equation_id', lambda : equation_id)
+        return
     #########################################################################
     
     def set_add_func(self, func):
@@ -350,12 +354,12 @@ class DEAPLearningSystem(LearningSystem):
             print("Already Reset")
         return
 
-    def build_model(self, X, y, tournsize=3):
+    def build_model(self, X, y, equation_id, tournsize=3):
         """
         Runs the builder functions in order with data
         """
         arity = self.get_arity_from_X(X)
-        self.invariant_build_model(arity, tournsize)
+        self.invariant_build_model(arity,equation_id, tournsize)
         if self.algorithm == "lgml":
             self.initialize_lgml_functions(X, y)
         else:
@@ -365,13 +369,13 @@ class DEAPLearningSystem(LearningSystem):
                 self.reg_add_func(X, y)
         return
 
-    def build_gen_model(self, generator, tournsize=15):
+    def build_gen_model(self, generator, equation_id,tournsize=15):
         """
         Runs builder functions in order with generator
         """
         smallx, smally = generator(no_samples=1)
         arity = self.get_arity_from_X(smallx)
-        self.invariant_build_model(arity, tournsize)
+        self.invariant_build_model(arity, equation_id, tournsize)
         if self.algorithm == "lgml":
             self.initialize_lgml_functions_gen(generator)
         else:
@@ -382,13 +386,14 @@ class DEAPLearningSystem(LearningSystem):
 
         return
 
-    def invariant_build_model(self, arity, tournsize):
+    def invariant_build_model(self, arity, equation_id, tournsize):
         self.create_fitness()
         self.create_and_reg_individual(arity)
         self.create_and_reg_population()
         self.reg_selection(tournsize)
         self.reg_mutation()
         self.reg_mating()
+        self.reg_name(equation_id)
 
     def set_func_list(self, func_list):
         """
@@ -414,20 +419,20 @@ class DEAPLearningSystem(LearningSystem):
         pop, log = get_algorithm(self.algorithm)(population=self.toolbox.population(self.population_size), toolbox=self.toolbox, cxpb=self.crossover_prob, mutpb=self.mutation_prob, ngen=self.ngens, halloffame=self.hof, verbose=self.verbose)
         return pop, log
 
-    def fit(self, X, y):
+    def fit(self, X, y, equation_id="Unammed Equation"):
         """
         Fit using fixed X and y
         """
         self.reset()
-        self.build_model(X, y)
+        self.build_model(X, y, equation_id)
         return self.train()
 
-    def fit_gen(self, gen):
+    def fit_gen(self, gen, equation_id="Unammed Equation"):
         """
         Fit using generator
         """
         self.reset()
-        self.build_gen_model(gen)
+        self.build_gen_model(gen, equation_id)
         return self.train()
 
     def get_predicted_equation(self):
@@ -732,7 +737,7 @@ class Algorithms():
         if True:
             df = toolbox.getX()
             df['target'] = toolbox.gety()
-            df.to_csv('LGGADATASET.csv', index=False)
+            df.to_csv(f'Datasets/{toolbox.equation_id()} LGGADataset.csv', index=False)
 
         return population, None
     
