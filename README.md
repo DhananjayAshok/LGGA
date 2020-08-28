@@ -40,7 +40,7 @@ To run the LGGA Tool on the new equation after set
 3. Supply the constraint function and lgml functions to the DEAPLearningSystem via set_add_func and set_lgml_func
 4. Call on the Trainers predict_equations with the eq specified as required and specify use_gens to be False
 5. Result will be saved in DEAP_data by default 
-6. Augmented Data Set will be saved in root directory
+6. Augmented Data Set will be saved in "Datasets/equation_id LGGA Dataset.csv"
 
 
 
