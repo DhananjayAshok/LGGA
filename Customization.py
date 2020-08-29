@@ -116,6 +116,12 @@ def add(x, y):
     #print(type(x))
     return operator.add(x, y)
 
+def mul(x, y):
+    return operator.mul(x, y)
+
+def sub(x, y):
+    return operator.sub(x, y)
+
 def neg(x):
     return -x
 
@@ -125,8 +131,8 @@ def neg(x):
 
 func_dict = {
     "add" : add,
-    "sub" : operator.sub,
-    "mul" : operator.mul,
+    "sub" : sub,
+    "mul" : mul,
     "div" : div,
     "exp" : exponent,
     "pow" : power,
