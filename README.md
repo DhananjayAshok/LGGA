@@ -1,3 +1,4 @@
+# Logic Guided Genetic Algorithms
 
 This is our implementation of the Logic Guided Genetic Algorithm, a genetic algorithm for Symbolic Regression that combines logical constraints with the genetic programming life cycle to help avoid local minima and perform effective data set augmentation.
 
