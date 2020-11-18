@@ -1,7 +1,7 @@
 # [Logic Guided Genetic Algorithms for Symbolic Regression]()
 This is our implementation of the Logic Guided Genetic Algorithm, a genetic algorithm for Symbolic Regression that combines logical constraints with the genetic programming life cycle to help avoid local minima and perform effective data set augmentation.
 
-This code was written by [Dhananjay Ashok](https://www.linkedin.com/in/dhananjay-ashok-576342142/), who is also the lead author on the working paper on the same topic.
+This code was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), who is also the lead author on the paper on the same topic. The other authors of the paper are - Joseph Scott, Sebastian Wetzel, Maysum Panju and Vijay Ganesh
 
 ## Prerequisites
 * Python 3.6+
