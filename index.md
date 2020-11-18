@@ -1,4 +1,8 @@
-# Working Genetic Algorithms and Symbolic Logic
+---
+layout: default
+---
+
+# Genetic Algorithms and Symbolic Logic
 Machine Learning is a field which develops algorithms that can make it feasible to search an incredibly large space of solutions. As opposed to guaranteeing an optimal solution, many ML algorithms decide to use an indication of the fitness of a proposed solution and optimize for this value. One such class of algorithms are genetic algorithms, which iterative evolve a population of solutions, carrying forward the best of these solutions to create new more nuanced solutions. We also note the [observations](https://sites.google.com/view/logic-for-machine-learning/home?authuser=0) of other researchers: that symbolic logic, a field that regularly tries to provide guarantees of the correctness of a solution has immense potential in guiding Genetic Algorithms through their evolutionary process. 
 
 This code was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), who is also the lead author on the paper on the same topic. The other authors of the paper are - Joseph Scott, Sebastian Wetzel, Maysum Panju and Vijay Ganesh.
