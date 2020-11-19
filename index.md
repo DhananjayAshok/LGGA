@@ -7,7 +7,9 @@ Machine Learning is a field which develops algorithms that can make it feasible 
 
 
 # Logic Guided Genetic Algorithms with Symbolic Regression
-This paper was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), Joseph Scott, Sebastian Wetzel, Maysum Panju and Vijay Ganesh.
+
+## People
+This paper was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), Joseph Scott, Sebastian Wetzel, Maysum Panju and [Vijay Ganesh](https://ece.uwaterloo.ca/~vganesh).
 
 ## Abstract
 We present a novel Auxiliary Truth enhanced Genetic Algorithm (GA) that uses logical or mathematical constraints as a means of data augmentation as well as to compute loss (in conjunction with the traditional MSE), with the aim of increasing both data efficiency and accuracy of symbolic regression (SR) algorithms. Our method, logic-guided genetic algorithm (LGGA), takes as input a set of labelled data points and auxiliary truths (ATs) (mathematical facts known a priori about the unknown function the regressor aims to learn) and outputs a specially generated and curated dataset that can be used with any SR method. Three key insights underpin our method: first, SR users often know simple ATs about the function they are trying to learn. Second, whenever an SR system produces a candidate equation inconsistent with these ATs, we can compute a counterexample to prove the inconsistency, and further, this counterexample may be used to augment the dataset and fed back to the SR system in a corrective feedback loop. Third, the value addition of these ATs is that their use in both the loss function and the data augmentation process leads to better rates of convergence, accuracy, and data efficiency. We evaluate LGGA against state-of-the-art SR tools, namely, Eureqa and TuringBot on 16 physics equations from "The Feynman Lectures on Physics" book. We find that using these SR tools in conjunction with LGGA results in them solving up to 30.0% more equations, needing only a fraction of the amount of data compared to the same tool without LGGA, i.e., resulting in up to a 61.9% improvement in data efficiency.
