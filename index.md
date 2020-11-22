@@ -2,8 +2,15 @@
 layout: default
 ---
 
-# Genetic Algorithms for Symbolic Regressions with Auxiliary Truths
-The problem we aim to solve is the following: How can the user of a symbolic regression (SR) system leverage their domain-specific knowledge, i.e., auxilliary truths (ATs), to make SR more data efficient and more likely to find the target equation. In our work we first note the huge potential in the use of auxiliary truths in the symbolic regression setting and showcase how many flaws of current industrial level SR tools can be attributed in part to their lack of consideration of these truths. We then outline a novel approach to using Auxiliary Truths in scoring functions and generating new datapoints without querying a solver. In our results we note that the LGGA tool with its data augmentation can enhance modern SR tools, enabling them to discover new equations and improving their data efficiency by up to 62%
+# The LGGA Approach
+## Auxiliary Truths for Symbolic Regression
+The problem we aim to solve is the following: How can the user of a symbolic regression (SR) system leverage their domain-specific knowledge, i.e., auxilliary truths (ATs), to make SR more data efficient and more likely to find the target equation. In our work we first note the huge potential in the use of auxiliary truths in the symbolic regression setting and showcase how many flaws of current industrial level SR tools can be attributed in part to their lack of consideration of these truths. 
+
+## Genetic Algorithms with Auxiliary Truths
+We outline a novel approach to using Auxiliary Truths in scoring functions and provide a method to combine this loss with existing metrics (like Mean Squared Error). Additionally we provide a method to generate new datapoints which are new, sound, and useful without ever having to query an oracle. 
+
+## Results
+In our results we note that the LGGA tool with its data augmentation can enhance modern SR tools, enabling them to discover new equations and improving their data efficiency by up to 62%
 
 
 ## People
