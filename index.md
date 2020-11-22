@@ -9,6 +9,18 @@ Machine Learning is a field which develops algorithms that can make it feasible 
 # Logic Guided Genetic Algorithms with Symbolic Regression
 
 ## People
+
+# Project Leader
+* [Vijay Ganesh](https://ece.uwaterloo.ca/~vganesh)
+
+# Main Author
+* [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/)
+
+# Collaborators
+* Joseph Scott
+* Maysum Panju
+* Sebastian Wetzel 
+
 This paper was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), Joseph Scott, Sebastian Wetzel, Maysum Panju and [Vijay Ganesh](https://ece.uwaterloo.ca/~vganesh).
 
 ## Abstract
