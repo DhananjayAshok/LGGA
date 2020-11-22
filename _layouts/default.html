@@ -36,9 +36,9 @@
       {% endif %}
     </header>
     <div class="topnav">
-        <a {% if navigation.url == page.url %} class="active"{% endif %} href="{{site.baseurl}}/">Home</a>
-        <a {% if navigation.url == page.url %} class="active"{% endif %} href="{{site.baseurl}}/people">People</a>
-        <a {% if navigation.url == page.url %} class="active"{% endif %} href="{{site.baseurl}}/contact">Contact</a>
+        <a {% if site.baseurl+"/" == page.url %} class="active"{% endif %} href="{{site.baseurl}}/">Home</a>
+        <a {% if site.baseurl+"/people" == page.url %} class="active"{% endif %} href="{{site.baseurl}}/people">People</a>
+        <a {% if site.baseurl+"/contact" == page.url %} class="active"{% endif %} href="{{site.baseurl}}/contact">Contact</a>
     </div>
 
     <main id="content" class="main-content" role="main">
