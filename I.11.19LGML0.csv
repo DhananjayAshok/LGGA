@@ -1,0 +1,2 @@
+Weight,Predicted Equation,MSE,Truth Error,Time Taken
+500,"add(mul(ARG5, ARG2), add(add(ARG5, ARG4), mul(ARG1, ARG5)))",32718499.27459933,5197036.342278935,5.253270864486694
