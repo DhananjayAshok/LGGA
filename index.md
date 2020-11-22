@@ -12,28 +12,6 @@ We outline a novel approach to using Auxiliary Truths in scoring functions and p
 ## Results
 In our results we note that the LGGA tool with its data augmentation can enhance modern SR tools, enabling them to discover new equations and improving their data efficiency by up to 62%
 
-
-## People
-
-# Project Leader
-* [Vijay Ganesh](https://ece.uwaterloo.ca/~vganesh)
-
-# Main Author
-* [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/)
-
-# Collaborators
-* Joseph Scott
-* Maysum Panju
-* Sebastian Wetzel 
-
-This paper was written by [Dhananjay Ashok](https://dhananjay-ashok.webnode.com/), Joseph Scott, Sebastian Wetzel, Maysum Panju and [Vijay Ganesh](https://ece.uwaterloo.ca/~vganesh).
-
-
-
-
-
-
-
 ## Citation
 If you use our work, please cite our paper. [Logic Guided Genetic Algorithms](https://arxiv.org/abs/2010.11328)
 
